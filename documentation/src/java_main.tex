@@ -1,0 +1,474 @@
+\section{Source code - Staff Program}
+\normalsize
+\rmfamily
+\subsection{InvalidUserException.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ An\ Exception\ for\ throwing\ when\ a\ Username\ or\ Password\ is\ incorrect.} \\
+\mbox{}\textit{\ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ *\ Thrown\ from\ \{}@link\textit{\ User\#login(Logger)\}\ so\ that\ the\ program\ doesn't\ have} \\
+\mbox{}\textit{\ *\ to\ compare\ ugly\ things\ like\ \{}@code\textit{\ null\}s\ to\ check\ if\ a\ User\ logged\ in.} \\
+\mbox{}\textit{\ *\ } \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{public}\ \textbf{class}\ InvalidUserException\ \textbf{extends}\ Exception\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ Serial\ Version\ UID\ for\ serialisation\ potential.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ long\ serialVersionUID\ =\ -239788711036612392L; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ default\ error\ message.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ String\ DEFAULT$\_$MESSAGE\ =\ \texttt{"{}Invalid\ User/Password"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Displays\ the\ default\ error\ message\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{InvalidUserException}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{super}(DEFAULT$\_$MESSAGE); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{Logger.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ java.text.SimpleDateFormat; \\
+\mbox{}\textbf{import}\ java.util.Date; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program.io.FileHandller; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Defines\ the\ logging\ class.} \\
+\mbox{}\textit{\ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ *\ This\ class\ handles\ all\ entries\ that\ have\ to\ be\ made\ to\ the} \\
+\mbox{}\textit{\ *\ \{}@linkplain\textit{\ StaffProgram\#LOG$\_$FILE\ logfile\},\ controlling\ how\ the\ entries} \\
+\mbox{}\textit{\ *\ are\ made\ and\ the\ format\ in\ which\ they\ are\ made.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ \ \ \ \ \ \ \ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ \ \ \ \ \ \ \ 1.0} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@see\textit{\ FileHandller} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{public}\ \textbf{class}\ Logger\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Link\ back\ to\ the\ User\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ User\ user; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Sets\ the\ link\ to\ the\ User.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ user\ \ \ \ \ \ \ \ The\ User\ to\ set\ the\ link\ back\ to.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{setUser}(User\ user)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.user\ =\ user; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Makes\ an\ entry\ to\ the\ logfile.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ } \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ activity\ \ \ \ \ \ \ \ The\ activity\ to\ be\ logged.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ filepath\ \ \ \ \ \ \ \ The\ path\ to\ the\ file\ that\ the\ activity\ was} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ performed\ on.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ generateLogEntry()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{log}(String\ activity,\ String\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileHandller\ handller\ =\ \textbf{new}\ \textbf{FileHandller}(StaffProgram.LOG$\_$FILE); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ handller.\textbf{appendFile}(\textbf{generateLogEntry}(activity,\ filepath)); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ handller.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Generates\ the\ text\ for\ a\ log\ entry} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ activity\ \ \ \ \ \ \ \ The\ activity\ to\ be\ logged.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ filepath\ \ \ \ \ \ \ \ The\ path\ to\ the\ file\ that\ the\ activity\ was} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ performed\ on.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ encodeDateTime()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ String\ \textbf{generateLogEntry}(String\ activity,\ String\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ file\ =\ filepath.\textbf{replace}(StaffProgram.BASE$\_$DIR,\ \texttt{"{}"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String[]\ path\ =\ StaffProgram.BASE$\_$DIR.\textbf{split}(\texttt{"{}/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ base\ =\ path[path.length-1]; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ entry\ =\ String.\textbf{format}(\texttt{"{}\%s\ staff:\ \%s}\texttt{\textbackslash{}t}\texttt{\%s}\texttt{\textbackslash{}t}\texttt{\%s/\%s}\texttt{\textbackslash{}n}\texttt{"{}},\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{encodeDateTime}(),\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user.\textbf{getUID}(),\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ activity,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ base, \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ file); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ entry; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Takes\ the\ date\ and\ time\ and\ encodes\ them\ into\ the\ string\ format} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ used\ by\ the\ log.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ An\ encoded\ date\ time.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ String\ \textbf{encodeDateTime}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Date\ d\ =\ \textbf{new}\ \textbf{Date}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SimpleDateFormat\ df\ =\ \textbf{new}\ \textbf{SimpleDateFormat}(\texttt{"{}yyyy-MM-dd-kk-mm-ss"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ df.\textbf{format}(d); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{StaffProgram.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ java.util.Scanner; \\
+\mbox{}\textbf{import}\ java.io.File; \\
+\mbox{}\textbf{import}\ java.io.FileInputStream; \\
+\mbox{}\textbf{import}\ java.io.IOException; \\
+\mbox{}\textbf{import}\ java.io.InputStream; \\
+\mbox{}\textbf{import}\ java.io.InputStreamReader; \\
+\mbox{} \\
+\mbox{}\textbf{public}\ \textbf{class}\ StaffProgram\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ File\ CONFIG$\_$FILE\ =\ \textbf{new}\ \textbf{File}(\texttt{"{}config"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ \textbf{final}\ String\ BASE$\_$DIR\ =\ \textbf{getBaseDir}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ \textbf{final}\ String\ LOG$\_$FILE\ =\ BASE$\_$DIR\ +\ \texttt{"{}logfile.log"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ \textbf{final}\ String\ AUTH$\_$FILE\ =\ BASE$\_$DIR\ +\ \texttt{"{}.auth"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ \textbf{final}\ String\ STUDENT$\_$DIR\ =\ BASE$\_$DIR\ +\ \texttt{"{}students/"{}}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Defins\ the\ list\ option} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ User\#list()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ LIST\ =\ \texttt{'l'}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Defines\ the\ get\ option} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ User\#get(String\ uid,\ String\ destPath);} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ GET\ \ =\ \texttt{'g'}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Defines\ the\ mark\ option} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ User\#mark(String\ uid);} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ MARK\ =\ \texttt{'m'}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Defines\ the\ quit\ option\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ QUIT\ =\ \texttt{'q'}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ } \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Defines\ the\ help\ option} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ help()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ HELP\ =\ \texttt{'h'}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Defines\ the\ Unrecognised\ option,\ used\ to\ continue\ looping\ the\ menu.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ \textbf{final}\ char\ NONE\ =\ \texttt{'\ '}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ void\ \textbf{main}(String\ args[])\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Logger\ logger\ =\ \textbf{new}\ \textbf{Logger}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ User\ user\ =\ \textbf{null}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user\ =\ User.\textbf{login}(logger); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (InvalidUserException\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(e.\textbf{getMessage}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.\textbf{exit}(1); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logger.\textbf{setUser}(user); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ char\ option\ =\ NONE; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Scanner\ in\ =\ \textbf{new}\ \textbf{Scanner}(System.in); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{while}\ (option\ ==\ NONE)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ option\ code\ (h\ for\ help):\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ in.\textbf{next}().\textbf{charAt}(0); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ uid\ =\ \texttt{"{}"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{switch}\ (option)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ LIST: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user.\textbf{list}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ \ GET: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ the\ uid\ of\ the\ student\ to\ get\ the\ submission\ of:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uid\ =\ in.\textbf{next}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ the\ location\ you\ wish\ to\ download\ this\ submission\ to:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ file\ =\ in.\textbf{next}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user.\textbf{download}(uid,\ file); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ MARK: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ the\ uid\ of\ the\ student\ to\ submit\ a\ mark\ for:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uid\ =\ in.\textbf{next}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user.\textbf{mark}(uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ QUIT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ HELP: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StaffProgram.\textbf{help}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ NONE; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{default}: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{println}(\texttt{"{}Unrecognised\ option\ '"{}}+option+\texttt{"{}'"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ NONE; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Prints\ out\ the\ help\ options\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ void\ \textbf{help}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{printf}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{\%s\ -\ List\ all\ students\ with\ submitted\ work.}\texttt{\textbackslash{}n}\texttt{"{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\texttt{"{}}\texttt{\textbackslash{}t}\texttt{\%s\ -\ Download\ a\ specified\ student's\ work.}\texttt{\textbackslash{}n}\texttt{"{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\texttt{"{}}\texttt{\textbackslash{}t}\texttt{\%s\ -\ Submit\ a\ mark\ for\ a\ specified\ student's\ work.}\texttt{\textbackslash{}n}\texttt{"{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\texttt{"{}}\texttt{\textbackslash{}t}\texttt{\%s\ -\ Quit\ the\ program.}\texttt{\textbackslash{}n}\texttt{"{}},\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LIST,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GET,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MARK,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIT); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Gets\ the\ Base\ Directory\ from\ the\ config\ file} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ The\ path\ of\ the\ Base\ Directory} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ String\ \textbf{getBaseDir}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ line\ =\ \texttt{"{}"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(CONFIG$\_$FILE.\textbf{exists}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Scanner\ s\ =\ \textbf{new}\ \textbf{Scanner}(\textbf{new}\ \textbf{InputStreamReader}( \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{new}\ \textbf{FileInputStream}(CONFIG$\_$FILE))); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\ =\ s.\textbf{nextLine}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ line+\texttt{"{}/"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{catch}\ (IOException\ ioe)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ioe.\textbf{printStackTrace}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ \texttt{"{}"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{User.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ java.io.Console; \\
+\mbox{}\textbf{import}\ java.io.File; \\
+\mbox{}\textbf{import}\ java.io.FileInputStream; \\
+\mbox{}\textbf{import}\ java.io.IOException; \\
+\mbox{}\textbf{import}\ java.io.InputStream; \\
+\mbox{}\textbf{import}\ java.io.InputStreamReader; \\
+\mbox{}\textbf{import}\ java.util.Scanner; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program.io.FileHandller; \\
+\mbox{} \\
+\mbox{}\textbf{public}\ \textbf{class}\ User\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ Singleton\ Instance.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{static}\ \textbf{private}\ User\ INSTANCE\ =\ \textbf{null}; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Logs\ in\ a\ User.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ This\ is\ the\ only\ way\ of\ creating\ a\ User,\ and\ ensures\ that\ the\ singleton} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ design\ patter\ this\ class\ uses\ is\ kept\ strict.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ As\ expected\ from\ a\ login\ method,\ the\ system\ asks\ for\ a\ User\ ID\ and\ password} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ (the\ latter\ of\ which\ is\ concealed\ by\ the\ Console),\ then\ checks\ them\ against} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ the\ \{}@linkplain\textit{\ StaffProgram\#AUTH$\_$FILE\ authentication\ file\}\ and\ acts\ } \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ accordingly.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ \ \ \ \ The\ link\ back\ to\ the\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@throws\textit{\ InvalidUserException\ \ \ \ \ \ \ \ If\ the\ User\ ID\ or\ connected\ password\ is\ } \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ incorrect.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ Console} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ User\ \textbf{login}(Logger\ logger)\ \textbf{throws}\ InvalidUserException\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Console\ c\ =\ System.\textbf{console}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(c\ ==\ \textbf{null})\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(\texttt{"{}No\ Console."{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.\textbf{exit}(2); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Scanner\ s\ =\ \textbf{new}\ \textbf{Scanner}(System.in); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ User\ ID:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ uid\ =\ s.\textbf{next}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{printf}(\texttt{"{}Password\ for\ \%s:\ "{}},\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ char[]\ charPass\ =\ c.\textbf{readPassword}(\texttt{"{}"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ passwd\ =\ String.\textbf{valueOf}(charPass); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileHandller\ f\ =\ \textbf{new}\ \textbf{FileHandller}(StaffProgram.AUTH$\_$FILE); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ auth\ =\ f.\textbf{getFile}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ line; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Scanner\ reader\ =\ \textbf{null}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reader\ =\ \textbf{new}\ \textbf{Scanner}(\textbf{new}\ \textbf{InputStreamReader}( \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{new}\ \textbf{FileInputStream}(auth))); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{while}\ (reader.\textbf{hasNext}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\ =\ reader.\textbf{nextLine}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (line.\textbf{equals}(String.\textbf{format}(\texttt{"{}\%s\ staff\ \%s"{}},\ uid,\ passwd)))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INSTANCE\ =\ \textbf{new}\ \textbf{User}(uid,\ logger); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reader.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ eio)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f.\textbf{close}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (INSTANCE\ ==\ \textbf{null})\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{InvalidUserException}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ INSTANCE; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ User\ ID\ of\ the\ current\ User\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ String\ uid; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ link\ to\ the\ Logger\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ Logger\ logger; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ File\ Handller\ this\ class\ makes\ use\ of\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ FileHandller\ fileHandller; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Creates\ a\ new\ User,\ with\ the\ given\ User\ ID\ and\ a\ link\ to\ a\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Note\ that\ this\ is\ private\ to\ facilitate\ the\ singleton\ design\ pattern\ this\ class\ uses.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ uid\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ User\ ID\ of\ this\ User.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ \ \ \ \ \ The\ link\ to\ the\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{User}(String\ uid,\ Logger\ logger)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.uid\ =\ uid; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.logger\ =\ logger; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Returns\ the\ User\ ID\ of\ the\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ The\ User\ ID\ of\ the\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ String\ \textbf{getUID}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ uid; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Lists\ all\ Students\ that\ have\ made\ submissions.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Works\ by\ looping\ through\ all\ directories\ in\ the\ \{}@linkplain\textit{\ StaffProgram\#STUDENT$\_$DIR\ student\ directory\}} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ looking\ for\ those\ with\ more\ than\ 1\ file\ contained\ within\ them\ (bearing\ in\ mind\ a\ directory\ for\ results} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ is\ created\ in\ the\ student's\ directory\ when\ it's\ created).\ And\ writing\ their\ username\ (which\ is\ handily} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ the\ name\ of\ the\ directory\ too)\ to\ a\ String.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Assuming\ any\ Students\ have\ made\ a\ submission,\ this\ String\ is\ then\ printed,\ otherwise\ a\ message\ to\ tell} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ the\ user\ than\ no\ Students\ have\ made\ submissions\ yet\ is\ displayed.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ FileHandller\#getFile()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ File\#listFiles()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{list}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//fileHandller\ =\ new\ FileHandller(StaffProgram.STUDENT$\_$DIR);} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//TODO\ -\ Cannot\ currently\ lock\ directories.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ studentDir\ =\ \textbf{new}\ \textbf{File}(StaffProgram.STUDENT$\_$DIR);\ \textit{//fileHandller.getFile();} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File[]\ students\ =\ studentDir.\textbf{listFiles}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ boolean\ submission\ =\ \textbf{false}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ submissions\ =\ \texttt{"{}The\ following\ students\ have\ made\ submissions:}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{for}(File\ student:students)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(student.\textbf{listFiles}().length\ $>$\ 1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ submission\ =\ \textbf{true}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ submissions\ +=\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}\ +\ student.\textbf{getName}()\ +\ \texttt{"{}}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(submission)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(submissions); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{println}(\texttt{"{}No\ Students\ have\ made\ submissions"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logger.\textbf{log}(\texttt{"{}Listed\ Submissions"{}},StaffProgram.STUDENT$\_$DIR); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//fileHandller.close();} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{download}(String\ uid,\ String\ destination)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ studentDir\ =\ \textbf{new}\ \textbf{File}(StaffProgram.STUDENT$\_$DIR); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File[]\ studentDirs\ =\ studentDir.\textbf{listFiles}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{for}(File\ student:studentDirs)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(student.\textbf{getName}().\textbf{equals}(uid))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File[]\ studentFiles\ =\ student.\textbf{listFiles}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(studentFiles.length\ $>$\ 1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{for}(File\ assignFile:studentFiles)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(!(assignFile.\textbf{getName}().\textbf{equals}(\texttt{"{}results"{}})))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller\ =\ \textbf{new}\ \textbf{FileHandller}(assignFile.\textbf{getAbsolutePath}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller.\textbf{downloadFile}(destination); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logger.\textbf{log}(\texttt{"{}Downloaded\ assignment"{}},\ assignFile.\textbf{getAbsolutePath}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{println}(\texttt{"{}Could\ not\ find\ assigment\ of\ student\ with\ uid:\ "{}}+uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{mark}(String\ uid)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ studentDir\ =\ \textbf{new}\ \textbf{File}(StaffProgram.STUDENT$\_$DIR); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File[]\ studentDirs\ =\ studentDir.\textbf{listFiles}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{for}(File\ student:studentDirs)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(student.\textbf{getName}().\textbf{equals}(uid))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File[]\ studentFiles\ =\ student.\textbf{listFiles}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(studentFiles.length\ $>$\ 1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ markFile\ =\ \textbf{new}\ \textbf{File}(student.\textbf{getAbsolutePath}()+\texttt{"{}/results/result.txt"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(!markFile.\textbf{exists}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{println}(markFile.\textbf{getAbsolutePath}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ markFile.\textbf{createNewFile}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller\ =\ \textbf{new}\ \textbf{FileHandller}(markFile.\textbf{getAbsolutePath}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Scanner\ in\ =\ \textbf{new}\ \textbf{Scanner}(System.in); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{print}(\texttt{"{}Enter\ the\ mark\ (\%):\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ mark\ =\ in.\textbf{nextInt}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in.\textbf{nextLine}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.out.\textbf{println}(\texttt{"{}Enter\ any\ comments:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ String\ comment\ =\ in.\textbf{nextLine}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller.\textbf{appendFile}(String.\textbf{format}(\texttt{"{}\%d\%\%}\texttt{\textbackslash{}n}\texttt{\%s}\texttt{\textbackslash{}n}\texttt{"{}},\ mark,\ comment)); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileHandller.\textbf{close}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logger.\textbf{log}(\texttt{"{}Submitted\ mark\ for\ "{}}+uid,\ markFile.\textbf{getAbsolutePath}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(e); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(\texttt{"{}Cannot\ submit\ mark:\ Student\ does\ not\ exist\ or\ has\ not\ yet\ submitted"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage

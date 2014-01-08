@@ -1,0 +1,264 @@
+\normalsize
+\rmfamily
+\subsection{FileException.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program.io; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Defines\ the\ exception\ to\ be\ thrown\ if\ there\ is\ an\ error\ with} \\
+\mbox{}\textit{\ *\ handlling\ a\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ \ \ \ \ \ \ \ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ \ \ \ \ \ \ \ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{public}\ \textbf{class}\ FileException\ \textbf{extends}\ Exception\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Calls\ the\ super\ constructor.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ message\ \ \ \ \ \ \ \ The\ message\ to\ display.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ Exception\#Exception(String)} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{FileException}(String\ message)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{super}(message); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{FileHandller.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program.io; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ java.io.File; \\
+\mbox{}\textbf{import}\ java.io.IOException; \\
+\mbox{}\textbf{import}\ java.io.BufferedWriter; \\
+\mbox{}\textbf{import}\ java.io.FileWriter; \\
+\mbox{}\textbf{import}\ java.io.FileInputStream; \\
+\mbox{}\textbf{import}\ java.io.FileOutputStream; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ A\ class\ to\ handle\ all\ file\ operations.} \\
+\mbox{}\textit{\ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ *\ This\ class\ handles\ file\ operations\ the\ program\ needs\ to\ perform,\ which} \\
+\mbox{}\textit{\ *\ ensures\ that\ file\ locking\ is\ performed\ when\ these\ operations\ are.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ \ \ \ \ \ \ \ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ \ \ \ \ \ \ \ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{public}\ \textbf{class}\ FileHandller\ \{ \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Uploads\ a\ file\ from\ the\ source\ location\ to\ the\ destination\ } \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ location.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ dest\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ destination\ filepath.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ src\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ source\ filepath.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@throws\textit{\ FileException\ \ \ \ \ \ \ \ If\ the\ opertaion\ does\ not} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ complete\ sucessfully.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ copy(String,\ String)} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{static}\ void\ \textbf{uploadFile}(String\ dest,\ String\ src)\ \textbf{throws}\ FileException\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileLock\ l\ =\ \textbf{new}\ \textbf{FileLock}(dest); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileHandller.\textbf{copy}(dest,\ src); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l.\textbf{unlock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Copies\ the\ source\ file\ to\ the\ destination\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ dest\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ destination\ filepath.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ src\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ source\ filepath.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@throws\textit{\ FileException\ \ \ \ \ \ \ \ If\ the\ opertaion\ does\ not} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ complete\ sucessfully.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ \textbf{static}\ void\ \textbf{copy}(String\ dest,\ String\ src)\ \textbf{throws}\ FileException\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ srcFile\ =\ \textbf{new}\ \textbf{File}(src); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ destFile\ =\ \textbf{new}\ \textbf{File}(dest); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (!srcFile.\textbf{exists}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{FileException}(\texttt{"{}Source\ file\ does\ not\ exist"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (!srcFile.\textbf{canRead}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{FileException}(\texttt{"{}Source\ file\ is\ unreadable"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (srcFile.\textbf{isFile}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (!destFile.\textbf{exists}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//System.out.println("{}Creating\ file\ "{}+destFile.getAbsolutePath());} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ destFile.\textbf{createNewFile}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileInputStream\ in\ =\ \textbf{new}\ \textbf{FileInputStream}(srcFile); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileOutputStream\ out\ =\ \textbf{new}\ \textbf{FileOutputStream}(destFile); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ byte[]\ buffer\ =\ \textbf{new}\ byte[1024]; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ bytesRead\ =\ 0; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//System.out.print("{}Copying\ "{}+srcFile.getAbsolutePath()+"{}\ to\ "{}+destFile.getAbsolutePath());} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{while}((bytesRead\ =\ in.\textbf{read}(buffer))\ !=\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ out.\textbf{write}(buffer,\ 0,\ bytesRead); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//System.out.println("{}."{});} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//System.out.println();} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ out.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{FileException}(\texttt{"{}Error\ handlling\ file"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{FileException}(\texttt{"{}Cannot\ copy\ to\ an\ existing\ file"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{new}\ \textbf{FileException}(\texttt{"{}Cannot\ copy\ dir"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ filepath\ of\ the\ file\ to\ handle.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ String\ filepath; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ file\ lock\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ FileLock\ lock; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Creates\ a\ file\ handller\ for\ the\ specified\ filepath.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ filepath\ \ \ \ \ \ \ \ The\ file\ to\ handle.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{FileHandller}(String\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.filepath\ =\ filepath; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Downloads\ to\ current\ file\ to\ the\ destination\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ destFilepath\ \ \ \ \ \ \ \ The\ path\ of\ the\ destination\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{downloadFile}(String\ destFilepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock\ =\ \textbf{new}\ \textbf{FileLock}(filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileHandller.\textbf{copy}(destFilepath,\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (FileException\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(e); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock.\textbf{unlock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Appends\ the\ given\ string\ to\ the\ current\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ appendText\ \ \ \ \ \ \ \ The\ String\ to\ append\ to\ the\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{appendFile}(String\ appendText)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock\ =\ \textbf{new}\ \textbf{FileLock}(filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BufferedWriter\ append\ =\ \textbf{new}\ \textbf{BufferedWriter}(\textbf{new}\ \textbf{FileWriter}(filepath,\ \textbf{true})); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ append.\textbf{write}(appendText); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ append.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ ioe)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//TODO\ Something\ here.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock.\textbf{unlock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Closes\ the\ file\ handller\ in\ the\ absense\ of\ a\ destructor\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{close}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock.\textbf{unlock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Gets\ the\ current\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ The\ current\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ File\ \textbf{getFile}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lock\ =\ \textbf{new}\ \textbf{FileLock}(filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ ret\ =\ \textbf{new}\ \textbf{File}(filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ ret; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{FileLock.java}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{package}\ uk.ac.aber.users.adb9.cs22510.staff$\_$program.io; \\
+\mbox{} \\
+\mbox{}\textbf{import}\ java.io.File; \\
+\mbox{}\textbf{import}\ java.io.RandomAccessFile; \\
+\mbox{}\textbf{import}\ java.io.FileNotFoundException; \\
+\mbox{}\textbf{import}\ java.io.IOException; \\
+\mbox{}\textbf{import}\ java.nio.channels.FileChannel; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Creates\ a\ lock\ on\ a\ given\ file.} \\
+\mbox{}\textit{\ *\ }\textbf{$<$p$>$} \\
+\mbox{}\textit{\ *\ This\ class\ deals\ with\ the\ file\ locking\ behaviour\ needed\ for\ the\ program,} \\
+\mbox{}\textit{\ *\ using\ the\ newer\ java.nio\ classes\ to\ facilitate\ this\ behaviour.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ \ \ \ \ \ \ \ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ \ \ \ \ \ \ \ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{public}\ \textbf{class}\ FileLock\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ filepath\ to\ the\ locked\ file\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ String\ filepath; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ Java\ File\ Lock\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ java.nio.channels.FileLock\ javaLock; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ file\ channel\ of\ the\ file\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ FileChannel\ channel; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Creates\ the\ FileLock\ and\ ensures\ it\ is\ locked.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ filepath\ \ \ \ \ \ \ \ The\ filepath\ to\ the\ locked\ file} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ \textbf{FileLock}(String\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.filepath\ =\ filepath; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{this}.\textbf{lock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Performs\ to\ actual\ lock.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{private}\ void\ \textbf{lock}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ File\ file\ =\ \textbf{new}\ \textbf{File}(filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ channel\ =\ \textbf{new}\ \textbf{RandomAccessFile}(file,\ \texttt{"{}rw"{}}).\textbf{getChannel}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ javaLock\ =\ channel.\textbf{lock}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (FileNotFoundException\ fnfe)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(fnfe); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ ioe)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ System.err.\textbf{println}(ioe); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Unlocks\ the\ file\ as\ Java\ has\ no\ proper\ deconstructor} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{public}\ void\ \textbf{unlock}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ javaLock.\textbf{release}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ channel.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (IOException\ ioe)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//System.err.println(ioe);} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage

@@ -1,0 +1,626 @@
+\section{Source code - Student Program}
+\normalsize
+\rmfamily
+\subsection{file\_lock.c}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fcntl.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$errno.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$unistd.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}file$\_$lock.h"{}} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Neal\ Snooke} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{struct}\ flock*\ \textbf{file$\_$lock}(short\ type,\ short\ whence)\ \{ \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{struct}\ flock\ ret; \\
+\mbox{}\ \ \ \ ret.l$\_$type\ =\ type; \\
+\mbox{}\ \ \ \ ret.l$\_$start\ =\ 0; \\
+\mbox{}\ \ \ \ ret.l$\_$whence\ =\ whence; \\
+\mbox{}\ \ \ \ ret.l$\_$len\ =\ 0; \\
+\mbox{}\ \ \ \ ret.l$\_$pid\ =\ \textbf{getpid}(); \\
+\mbox{}\ \ \ \ \textbf{return}\ \&ret; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{lock}(char\ *\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Locking\ file...}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ int\ file$\_$descriptor\ =\ \textbf{open}(filepath,\ O$\_$RDWR); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(file$\_$descriptor\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Could\ not\ open\ \%s:\ File\ Descriptor\ Error}\texttt{\textbackslash{}n}\texttt{"{}},\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ -1; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{struct}\ flock*\ fl\ =\ \textbf{file$\_$lock}(F$\_$WRLCK,\ SEEK$\_$SET); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(\textbf{fcntl}(file$\_$descriptor,\ F$\_$SETLK,\ fl)\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(errno\ ==\ EACCES\ $|$$|$\ errno\ ==\ EAGAIN)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Unable\ to\ lock\ \%s:\ File\ is\ already\ locked\ by\ another\ process.}\texttt{\textbackslash{}n}\texttt{"{}},\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Unable\ to\ lock\ \%s:\ Unknown\ error.}\texttt{\textbackslash{}n}\texttt{"{}},\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ -1; \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{\ \textit{//\ Lock\ has\ been\ obtained.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ file$\_$descriptor; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{unlock}(int\ file$\_$descriptor)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(file$\_$descriptor\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Cannot\ unlock\ file:\ File\ Descriptor\ Error}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 0; \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{fcntl}(file$\_$descriptor,\ F$\_$SETLKW,\ \textbf{file$\_$lock}(F$\_$UNLCK,\ SEEK$\_$SET)); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{close}(file$\_$descriptor); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 1; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{file\_lock.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Creates\ a\ lock\ on\ a\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Locks\ a\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@param\textit{\ filepath\ The\ path\ to\ the\ file.} \\
+\mbox{}\textit{\ *\ }@return\textit{\ The\ file\ descriptor\ of\ the\ file\ to\ lock,\ -1\ if\ anything\ fails.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}int\ \textbf{lock}(char\ *\ filepath); \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Unlocks\ a\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@param\textit{\ file$\_$descriptor} \\
+\mbox{}\textit{\ *\ }@return \\
+\mbox{}\textit{\ *\ \ \ \ \ \ \ \ \ 1\ -\ If\ the\ file\ unlocked\ sucessfully.} \\
+\mbox{}\textit{\ *\ \ \ \ \ \ \ \ \ 0\ -\ If\ not.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}int\ \textbf{unlock}(int\ file$\_$descriptor); \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{logger.c}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*} \\
+\mbox{}\textit{\ *\ logger.c\ copyright\ (c)\ Alexander\ Brown,\ March\ 2011} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$time.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}utils.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}logger.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}file$\_$lock.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ MAX$\_$ENTRY$\_$SIZE \\
+\mbox{}\textbf{\#define}\ MAX$\_$ENTRY$\_$SIZE\ 100 \\
+\mbox{}\textbf{\#endif} \\
+\mbox{} \\
+\mbox{}char\ *\ logfile; \\
+\mbox{} \\
+\mbox{}void\ \textbf{get$\_$logfile}(void)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(logfile\ !=\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ logfile\ =\ \textbf{malloc}(115\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ base$\_$dir\ =\ \textbf{malloc}(85\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$base$\_$dir}(base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(logfile,\ base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(logfile,\ \texttt{"{}/logfile.log"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(base$\_$dir); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ \textbf{log}(char\ *\ activity,\ char\ *\ uid,\ char\ *\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$logfile}(); \\
+\mbox{}\ \ \ \ \ \ \ \ int\ fd\ =\ \textbf{lock}(logfile); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ logfile\ =\ \textbf{fdopen}(fd,\ \texttt{"{}a"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}File\ open.}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ entry\ =\ \textbf{malloc}(MAX$\_$ENTRY$\_$SIZE\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{generate$\_$log$\_$entry}(entry,\ activity,\ uid,\ filepath);\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fprintf}(logfile,\ \texttt{"{}\%s"{}},\ entry); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(logfile); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{unlock}(fd); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(entry); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ \textbf{generate$\_$log$\_$entry}(char\ *\ entry,\ char\ *\ activity,\ char\ *\ uid,\ char\ *\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{//yyyy-mm-dd-hh-mm-ss\ stdnt:\ \%uid\ \ \ \ \ \ \ \ \%activity\ \ \ \ \ \ \ \ \%filepath} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{encode$\_$date$\_$time}(entry); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ \texttt{"{}\ stdnt:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ activity); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ \texttt{"{}}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ \textbf{encode$\_$date$\_$time}(char\ *\ entry)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ time$\_$t\ rawtime; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{struct}\ tm\ *\ timeinfo; \\
+\mbox{}\ \ \ \ \ \ \ \ char\ time$\_$str[21]; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{time}(\&rawtime); \\
+\mbox{}\ \ \ \ \ \ \ \ timeinfo\ =\ \textbf{localtime}(\&rawtime); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strftime}(time$\_$str,\ 21,\ \texttt{"{}\%Y-\%m-\%d-\%H-\%M-\%S"{}},\ timeinfo); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(entry,\ time$\_$str); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ \textbf{free$\_$logger}()\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(logfile); \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{logger.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$LOGGER$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$LOGGER$\_$H \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Logs\ an\ activity.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@param\textit{\ activity\ \ \ \ \ \ \ \ The\ activity\ performed.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ uid\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ user\ ID\ of\ the\ user.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ filepath\ \ \ \ \ \ \ \ The\ path\ to\ the\ file\ that\ the\ activity\ was\ performed\ upon.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}void\ \textbf{log}(char\ *\ activity,\ char\ *\ uid,\ char\ *\ filepath); \\
+\mbox{} \\
+\mbox{}void\ \textbf{generate$\_$log$\_$entry}(char\ *\ entry,\ char\ *\ activity,\ char\ *\ uid,\ char\ *\ filepath); \\
+\mbox{} \\
+\mbox{}void\ \textbf{encode$\_$date$\_$time}(char\ *\ entry); \\
+\mbox{} \\
+\mbox{}void\ \textbf{free$\_$logger}(void); \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \textit{/*\ $\_$LOGGER$\_$H\ */} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{main.c}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ LOGIN$\_$FAILURE \\
+\mbox{}\textbf{\#define}\ LOGIN$\_$FAILURE\ 12 \\
+\mbox{}\textbf{\#endif} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}user.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}logger.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ MENU$\_$OPTIONS \\
+\mbox{}\textbf{\#define}\ MENU$\_$OPTIONS \\
+\mbox{}\textbf{\#define}\ QUIT\ \ \ \ \ \ \ \ \texttt{'q'} \\
+\mbox{}\textbf{\#define}\ HELP\ \ \ \ \ \ \ \ \texttt{'h'} \\
+\mbox{}\textbf{\#define}\ GET\ \ \ \ \ \ \ \ \texttt{'g'} \\
+\mbox{}\textbf{\#define}\ SUBMIT\ \ \ \ \ \ \ \ \texttt{'s'} \\
+\mbox{}\textbf{\#define}\ MARK\ \ \ \ \ \ \ \ \texttt{'m'} \\
+\mbox{}\textbf{\#define}\ NONE\ \ \ \ \ \ \ \ \texttt{'\ '} \\
+\mbox{}\textbf{\#endif} \\
+\mbox{} \\
+\mbox{}\textbf{static}\ char\ uid[7]; \\
+\mbox{} \\
+\mbox{}int\ \textbf{main}(int\ argc,\ char\ **\ argv)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$logfile}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Enter\ User\ ID:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{scanf}(\texttt{"{}\%6s"{}},\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(!(\textbf{login}(uid)\ ==\ 1))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Invalid\ Username/Password}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 12; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(argc\ $<$\ 2)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ char\ option\ =\ NONE; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ char\ path[100]; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{while}(option\ ==\ NONE)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Enter\ option\ code\ (h\ for\ help):\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{fflush}(stdin); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{scanf}(\texttt{"{}\%1s"{}},\ \&option); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{getchar}();\ \textit{//\ getchar()\ apparently\ stops\ this\ looping\ infinitely\ on\ my\ machine.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{switch}(option)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ GET\ : \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Location\ to\ download\ the\ assignment\ to:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{scanf}(\texttt{"{}\%98s"{}},\ path); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(\textbf{download$\_$assignment}(path)\ ==\ 1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{log}(\texttt{"{}Downloaded\ assignment"{}},\ uid,\ \texttt{"{}repository/assignment/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ SUBMIT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Location\ of\ file\ to\ submit:\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{scanf}(\texttt{"{}\%98s"{}},\ path); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(\textbf{submit$\_$assignment}(path,\ uid)\ ==\ 1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{strcpy}(path,\ \texttt{"{}repository/students/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{strcat}(path,\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{strcat}(path,\ \texttt{"{}/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{log}(\texttt{"{}Uploaded\ assignment"{}},\ uid,\ path);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ MARK: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{view$\_$marks}(uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ HELP: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{\%c\ -\ Get\ Assignment.}\texttt{\textbackslash{}n\textbackslash{}t}\texttt{\%c\ -\ Submit\ Assignment.}\texttt{\textbackslash{}n\textbackslash{}t}\texttt{\%c\ -\ View\ Marks.}\texttt{\textbackslash{}n\textbackslash{}t}\texttt{\%c\ -\ Quit.}\texttt{\textbackslash{}n}\texttt{"{}},\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GET,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SUBMIT,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MARK,\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIT); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ NONE;\ \textit{//\ To\ allow\ looping} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ QUIT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{default}: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Unrecognised\ option\ '\%s'}\texttt{\textbackslash{}n}\texttt{"{}},\ \&option); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ NONE; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free$\_$logger}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ EXIT$\_$SUCCESS; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{user.c}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$sys/types.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$dirent.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$sys/stat.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$termios.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$unistd.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}user.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}utils.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}file$\_$lock.h"{}} \\
+\mbox{} \\
+\mbox{}void\ \textbf{set$\_$stdin$\_$echo}(int\ enable)\ \{ \\
+\mbox{}\ \ \ \ \textbf{struct}\ termios\ tty; \\
+\mbox{}\ \ \ \ \textbf{tcgetattr}(STDIN$\_$FILENO,\ \&tty); \\
+\mbox{}\ \ \ \ \textbf{if}\ (!enable) \\
+\mbox{}\ \ \ \ \ \ \ \ tty.c$\_$lflag\ \&=\ \textasciitilde{}ECHO; \\
+\mbox{}\ \ \ \ \textbf{else} \\
+\mbox{}\ \ \ \ \ \ \ \ tty.c$\_$lflag\ $|$=\ ECHO; \\
+\mbox{} \\
+\mbox{}\ \ \ \ (void)\ \textbf{tcsetattr}(STDIN$\_$FILENO,\ TCSANOW,\ \&tty); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{login}(char\ *\ uid)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{set$\_$stdin$\_$echo}(0); \\
+\mbox{}\ \ \ \ \ \ \ \ char\ passwd[13]; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}\%s's\ password:\ "{}},\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{scanf}(\texttt{"{}\%12s"{}},\ passwd); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{set$\_$stdin$\_$echo}(1); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ base$\_$dir\ =\ \textbf{malloc}(115\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$base$\_$dir}(base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(base$\_$dir,\ \texttt{"{}/.auth"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ int\ auth$\_$fd\ =\ \textbf{lock}(base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(auth$\_$fd\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Error:\ .auth\ file\ not\ found"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{free}(base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 0; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ auth\ =\ \textbf{fdopen}(auth$\_$fd,\ \texttt{"{}r"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ char\ line[100]; \\
+\mbox{}\ \ \ \ \ \ \ \ char\ user$\_$line[100]; \\
+\mbox{}\ \ \ \ \ \ \ \ int\ autherised\ =\ 0; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcpy}(user$\_$line,\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(user$\_$line,\ \texttt{"{}\ stdnt\ "{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(user$\_$line,\ passwd); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(user$\_$line,\ \texttt{"{}}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{while}(\textbf{fgets}(line,\ 100,\ auth)\ !=\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(\textbf{strcmp}(user$\_$line,\ line)\ ==\ 0)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ autherised\ =\ 1; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(auth); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{unlock}(auth$\_$fd); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ autherised;\ \ \ \ \ \ \ \  \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{download$\_$assignment}(char\ *\ dest$\_$path)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ src$\_$path\ =\ \textbf{malloc}(115\ *\ \textbf{sizeof}(char));\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ DIR\ *\ assignment$\_$dir; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{struct}\ dirent\ *\ dir$\_$entry; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{struct}\ stat\ entry$\_$stat;\  \\
+\mbox{}\ \ \ \ \ \ \ \ int\ has$\_$file\ =\ 0; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$base$\_$dir}(src$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(src$\_$path,\ \texttt{"{}/assignment/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ assignment$\_$dir\ =\ \textbf{opendir}(src$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{while}((dir$\_$entry\ =\ \textbf{readdir}(assignment$\_$dir))\ !=\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}\%s}\texttt{\textbackslash{}n}\texttt{"{}},dir$\_$entry-$>$d$\_$name); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(\textbf{stat}(dir$\_$entry-$>$d$\_$name,\ \&entry$\_$stat)\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(\textbf{S$\_$ISREG}(entry$\_$stat.st$\_$mode))\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{strcat}(src$\_$path,\ dir$\_$entry-$>$d$\_$name); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ has$\_$file\ =\ 1; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{closedir}(assignment$\_$dir); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(has$\_$file\ ==\ 0)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}No\ assignment\ file\ found}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 0; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ int\ ret\ =\ \textbf{copy}(src$\_$path,\ dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(src$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ ret; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{submit$\_$assignment}(char\ *\ src$\_$path,\ char\ *\ uid)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ dest$\_$path\ =\ \textbf{malloc}(115\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$base$\_$dir}(dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ \texttt{"{}/students/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ \texttt{"{}/"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ tokens\ =\ \textbf{strtok}(src$\_$path,\ \texttt{"{}/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ filename; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{while}(tokens\ !=\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ filename\ =\ tokens; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tokens\ =\ \textbf{strtok}(NULL,\ \texttt{"{}/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ filename); \\
+\mbox{}\ \ \ \ \ \ \ \ int\ ret\ =\ \textbf{copy}(src$\_$path,\ dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ ret; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ \textbf{view$\_$marks}(char\ *\ uid)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ dest$\_$path\ =\ \textbf{malloc}(115\ *\ \textbf{sizeof}(char)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{get$\_$base$\_$dir}(dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ \texttt{"{}/students/"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{strcat}(dest$\_$path,\ \texttt{"{}/results/result.txt"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ int\ dest$\_$fd\ =\ \textbf{lock}(dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ dest\ =\ \textbf{fdopen}(dest$\_$fd,\ \texttt{"{}r"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(dest\ ==\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}No\ results\ found\ for\ user\ '\%s'}\texttt{\textbackslash{}n}\texttt{"{}},\ uid); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{free}(dest$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}; \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \  \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ int\ mark; \\
+\mbox{}\ \ \ \ \ \ \ \ char\ comments[200]; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fscanf}(dest,\ \texttt{"{}\%d\%\%}\texttt{\textbackslash{}n}\texttt{"{}},\ \&mark); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fgets}(comments,\ 200,\ dest); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ char\ *\ grade; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (mark\ $<$=\ 15) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}F-"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 30) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}F"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 34) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}F+"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 39) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}E"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 43) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}D-"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 46) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}D"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 59) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}D+"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 53) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}C-"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 56) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}C"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 59) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}C+"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 63) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}B-"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 66) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}B"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 69) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}B+"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 79) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}A-"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 89) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}A"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else}\ \textbf{if}\ (mark\ $<$=\ 95) \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}A+"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{else} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grade\ =\ \texttt{"{}A++"{}}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Results\ for\ user\ '\%s':}\texttt{\textbackslash{}n\textbackslash{}t}\texttt{Mark:\ \%d\%\%\ (\%s)}\texttt{\textbackslash{}n\textbackslash{}t}\texttt{Comments:\ \%s}\texttt{\textbackslash{}n}\texttt{"{}},\ uid,\ mark,\ grade,\ comments); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(dest); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{unlock}(dest$\_$fd); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{free}(dest$\_$path); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{copy}(char\ *\ src$\_$path,\ char\ *\ dest$\_$path)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ dest; \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ src; \\
+\mbox{}\ \ \ \ \ \ \ \ int\ src$\_$fd; \\
+\mbox{}\ \ \ \ \ \ \ \ int\ reader; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ src$\_$fd\ =\ \textbf{lock}(src$\_$path); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(src$\_$fd\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ 0; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ src\ =\ \textbf{fdopen}(src$\_$fd,\ \texttt{"{}rb"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ dest\ =\ \textbf{fopen}(dest$\_$path,\ \texttt{"{}wb"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}Copying."{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{while}(1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reader\ =\ \textbf{fgetc}(src); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(reader\ ==\ EOF)\ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{fputc}((int)\ reader,\ dest); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}}\texttt{\textbackslash{}n}\texttt{"{}}); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(src); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(dest); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{unlock}(src$\_$fd); \\
+\mbox{}\textit{//\ \ \ \ \ \ \ \ free(src$\_$path);} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ 1; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{user.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ user.h\ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ \ \ \ \ \ \ \ Defines\ operations\ for\ a\ user.} \\
+\mbox{}\textit{\ *\ }@author\textit{\ \ \ \ \ \ \ \ Alexander\ Brown.} \\
+\mbox{}\textit{\ *\ }@version\textit{\ \ \ \ \ \ \ \ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$USER$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$USER$\_$H \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Logs\ in\ a\ user.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ uid\ \ \ \ \ \ \ \ \ The\ user\ id\ of\ the\ user.} \\
+\mbox{}\textit{\ *\ }@return\textit{\ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{1}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ was\ sucessful.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}int\ \textbf{login}(char\ *\ uid); \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Downloads\ the\ assignment.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ dest$\_$path\ \ \ \ \ \ \ \ The\ path\ of\ the\ file\ to\ download\ to.} \\
+\mbox{}\textit{\ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{1}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ was\ sucessful.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}int\ \textbf{download$\_$assignment}(char\ *\ dest$\_$path); \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}int\ \textbf{submit$\_$assignment}(char\ *\ src$\_$path,\ char\ *\ uid); \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Views\ the\ marks\ and\ comments\ for\ this\ assignment.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ uid\ \ \ \ \ \ \ \ The\ User\ ID\ of\ the\ user.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}void\ \textbf{view$\_$marks}(char\ *\ uid); \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Copies\ the\ source\ file\ to\ the\ destination\ file.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ src$\_$path\ \ \ \ \ \ \ \ The\ path\ to\ the\ source\ file.} \\
+\mbox{}\textit{\ *\ }@param\textit{\ dest$\_$path\ \ \ \ \ \ \ \ The\ path\ to\ the\ destination\ file.} \\
+\mbox{}\textit{\ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{1}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ was\ sucessful.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}int\ \textbf{copy}(char\ *\ src$\_$path,\ char\ *\ dest$\_$path); \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \textit{/*\ $\_$USER$\_$H\ */} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{utils.c}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*} \\
+\mbox{}\textit{\ *\ utils.c\ copyright\ (c)\ Alexander\ Brown,\ March\ 2011} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}utils.h"{}} \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}void\ \textbf{get$\_$base$\_$dir}(char\ *\ base$\_$dir)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ FILE\ *\ file\ =\ \textbf{fopen}(\texttt{"{}config"{}},\ \texttt{"{}r"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(file\ ==\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{printf}(\texttt{"{}config\ file\ not\ found."{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{exit}(1); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fscanf}(file,\ \texttt{"{}\%s}\texttt{\textbackslash{}n}\texttt{"{}},\ base$\_$dir); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{fclose}(file); \\
+\mbox{}\} \\
+\mbox{} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{utils.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown.} \\
+\mbox{}\textit{\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$UTILS$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$UTILS$\_$G \\
+\mbox{} \\
+\mbox{}void\ \textbf{get$\_$base$\_$dir}(char\ *\ base$\_$dir); \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \textit{/*\ $\_$UTILS$\_$H\ */} \\
+
+\clearpage

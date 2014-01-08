@@ -1,0 +1,5 @@
+nifest-Version: 1.0
+Created-By: Alexander D Brown
+Main-Class: uk.ac.aber.users.adb9.cs22510.staff_program.StaffProgram
+Class-Path: staff_program/src
+

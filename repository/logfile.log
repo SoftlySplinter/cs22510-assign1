@@ -1,0 +1,21 @@
+2011-03-24-16-01-13 init : softly	Initilisation	repository/
+2011-03-24-16-01-13 init : softly	Initilisation	repository/logfile.log
+2011-03-24-16-01-13 init : softly	Initilisation	repository/.auth
+2011-03-24-16-01-13 init : softly	Created user softly	repository/.auth
+2011-03-24-16-01-13 init : softly	Initilisation	repository/assignment/
+2011-03-24-16-01-13 init : softly	Initilisation	repository/students/
+2011-03-24-16-02-42 admin: softly	Uploaded Assignment	repository/assignment/assignment.txt
+2011-03-24-16-03-55 admin: softly	Created Staff User	repository/.auth
+2011-03-24-16-04-39 admin: softly	Created Student User	repository/.auth
+2011-03-24-16-06-09 stdnt: adb9	Downloaded assignment	repository/assignment/
+2011-03-24-16-22-04 stdnt: adb9	Downloaded assignment	repository/assignment/
+2011-03-24-16-26-38 stdnt: adb9	Uploaded assignment	repository/students/adb9/
+2011-03-24-16-27-27 stdnt: adb9	Uploaded assignment	repository/students/adb9/
+2011-03-24-16-28-09 stdnt: adb9	Uploaded assignment	repository/students/adb9/
+2011-03-24-16-28-41 stdnt: adb9	Uploaded assignment	repository/students/adb9/
+2011-03-24-16-29-25 staff: fwl	Listed Submissions	repository/students/
+2011-03-24-16-30-17 admin: softly	Created Student User	repository/.auth
+2011-03-24-16-30-54 stdnt: crl9	Uploaded assignment	repository/students/crl9/
+2011-03-24-16-32-58 staff: fwl	Listed Submissions	repository/students/
+2011-03-24-16-33-48 staff: fwl	Downloaded assignment	repository/students/adb9/submission.txt
+2011-03-24-16-35-44 staff: fwl	Submitted mark for adb9	repository/students/adb9/results/result.txt

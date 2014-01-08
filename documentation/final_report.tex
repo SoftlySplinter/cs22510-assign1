@@ -1,0 +1,103 @@
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\geometry{
+	body={7.0in, 10.0in},
+	left=0.75in,
+	top=0.75in
+}
+
+\hypersetup{
+	colorlinks = true,
+	urlcolor = black,
+	pdfauthor = {Alexander Brown},
+	pdfkeywords = {},
+	pdftitle = {Alexander Brown: CS22510 - Assignment 1},
+	pdfsubject = {CS22510 - Assignment 1},
+	pdfpagemode = Default
+}
+
+\setlength\parindent{0em}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\setcounter{tocdepth}{2}
+
+
+\title{CS22510 - Assignment 1}
+\author{Alexander Brown}
+\begin{document}
+	\maketitle
+	\newpage	
+		\section{File Layouts}
+			\subsection{logfile.log}
+				The format for the logfile is:
+				
+				\verb+yyyy-mm-dd-hh-mm-ss_progr: uid action path/file+
+
+				
+
+			\subsection{.auth}
+				The format of the .auth file is:
+
+				\verb+user group password+
+				
+				I also included a way of specifying comments (using the `\verb+#+' charcter) to allow leeway.
+			
+		\section{Language Choices}
+			I chose Java for the Staff Program as I believed it to be somewhat tougher with file handlling, but easier to work with Objects like Strings.
+			
+			I then chose C++ for the somewhat more complex Administrator Program, as I knew I would be able to handle the complexity better due to being more practised with Object Orientated programming. This left the Student Program for C. This played out fairly well as it seemed to have the least string manipulation.
+
+		\section{Program Description}
+
+			All programs have the same initial behaviour; the config file is found and the base directory is read. Then the user is prompted for a user ID, followed by a password (which is masked by disabling the stdin echo in C and C++, and using a system password call in Java). This is then made into a string, with the name of the program to match how it would appear in the .auth file. The .auth file is then opened and read line by line until either the two strings match, in which case the user is logged in and passed to the menu, or the end of the file is reached, in which case an error message is printed and the program exits.
+
+			\subsection{Adminstrator Program Description}
+				The administrator has four primary functions; uploading an assignment, creating a staff user, creating a student user and reading the logfile. Uploading an assignment is a matter of specifying a filepath to the file to upload as an assignment. A File Handller static function is then called with the location to upload (repository/assignment/<filename>), which in turn calls the copy static function.
+
+				Creating a staff and student user is almost exactly the same and as such they both call a private function to create a general user, passing in the type of user they are as an enum. This then creates a new file handller object for the file, generates a random password and formats the information into a string. This string is then passed into the file handller's append function. This function creates a new lock for the file and appends the input string to the file. The file lock is automatically released due to the destructor. These functions then return the generated password, which is printed to the administrator. The create student function also creates a directory for the uid of the student in the students directory, followed by a results directory in this directory.
+
+				These two functions also append what they did to the log file in a similar way to how the .auth file is appended to.
+
+				Reading the log file involves reading each line of the logfile, spliting and formatting it, then printing it to the screen.
+
+			\subsection{Student Program}
+				The student program has three primary features; downloading the assignment, uploading a submission and viewing the marks for a submission.
+
+				Downloading the assignment is simply a matter of asking the user where it should be downloaded to, then copying from the assignment directory to that specified location.
+
+				Uploading a submission is also fairly simple, copying from the specified location of the submission to the student's directory.
+
+				Viewing the marks is also fairly simple, just searching the results directory of the student's directory for the file result.txt. If it's there, split and format it somewhat nicely, work out the grade achieved using if statements and printing.
+
+				Appending to the logfile is also fairly simple, first off the logfile is locked, then opened with the append mode on. Then writing the formatted string and closing and unlocking the file.
+
+			\subsection{Staff Program}
+                                Much of the file handlling in the student program is modelled on how the admin program does the same. Refer to the above section for more information.
+
+				The Staff Program has three main features; listing all students that have made submissions, downloading the submission of a single student and giving marks for a specific student's submission.
+
+				Listing all students that have made submissions is a case of looping through the students directory, entrying each student's directory in turn and seeing if there's any files there other than the results directory. If there is it's printed.
+
+				Downloading is a case of locking the file, copying it to a specified location then unlocking it.
+
+				Giving marks is simply taking input from the keyboard and putting it into a text file in the right format.
+
+		\section{Evaluation}
+			At current the program is still fairly rough around the edges, it assumes all users are fairly competent and portable to systems other than *NIX, due to both the Makefile and the file locking. However it does meet the requirements fairly well and I have learned a fair amount about file handlling in all languages (unfortunately Java's new io libraries aren't yet fully available as they would have made some tasks much easier). I also took the time to learn a lot more about makefiles as it did make the project a lot easier to debug and run (and also being able to create the directory structure using BASH commands did make life a lot easier).
+
+			If I'd had more time I probably would have made changes to the file locking, creating a temporary <filename>.lock file instead of relying on external, non-portable libraries to ensure locking was done correctly. Written inside these files would be the pid of the program locking them. Though this would probably produce a little more overhead, it would have made debugging easier.
+
+			I would also have changed to the way logging occured; possibly to the extent of using a threaded dqueue (new entries are added to the back of the dqueue, then all the while to top element is popped, attempted to be written to the logfile. If it fails it's put back onto the top of the queue, otherwise it's done with) to ensure loggin happens without affecting the user. Currently this probably wouldn't be a problem due to the small userbase, however it's likely the with increased traffic getting locked out of the logfile could be an issue and at current the program would either give up logging or wait until it can log, either way stopping the user from continuing.
+
+			Finally I would have made the admin program set up the directory stucture on the first run instead of the makefile to allow for increased portability.
+
+		\section{Run Example}
+			\input{./run.tex}
+
+		\input{./src/cpp.tex}
+		\input{./src/java_main.tex}
+		\input{./src/c.tex}
+\end{document}

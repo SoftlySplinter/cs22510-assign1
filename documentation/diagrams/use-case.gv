@@ -1,0 +1,21 @@
+digraph G {
+	rankdir="LR";
+	
+	subgraph staff {
+		Staff->"List Students with Submissions";
+		Staff->"Copy Student Assignment";
+		Staff->"Submit Mark";
+	}
+	
+	subgraph student {
+		Student->"View/Copy Assignment";
+		Student->"Submit Assignment";
+		Student->"View Results";
+	}
+	
+	subgraph admin {
+		Administrator->"Create Assignment";
+		Administrator->"Enter User Details";
+		Administrator->"View Log File";
+	}
+}

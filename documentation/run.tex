@@ -1,0 +1,262 @@
+\section{Example Usage}
+
+\begin{verbatim}
+$ make
+
+$ ./admin_program
+Enter User ID: softly
+softly's password:
+Enter option code (h for help): h
+        c [file]: Upload Assignment
+        s [uid]: Create a new Staff User
+        d [uid]: Create a new Student User
+        l: Read the log file
+Enter option code (h for help): c
+Enter the file (including path) of the assignment: assignment.txt
+
+$ ./admin_program
+Enter User ID: softly
+softly's password:
+Enter option code (h for help): s
+Enter the UID for the new staff user: fwl
+Created Staff User: fwl
+password: xf\xgDq\L
+
+$ ./admin_program
+Enter User ID: softly
+softly's password:
+Enter option code (h for help): d
+Enter the UID for the new student user: adb9
+Created Student User: adb9
+password: pIgC2Aw7>]b
+
+$ ./student_prog
+Enter User ID: adb9
+adb9's password:
+Enter option code (h for help): h
+        g - Get Assignment.
+        s - Submit Assignment.
+        m - View Marks.
+        q - Quit.
+Enter option code (h for help): g
+Location to download the assignment to: download-assign.txt
+
+$./student_prog
+Enter User ID: adb9
+adb9's password:
+Enter option code (h for help): s
+Location of file to submit: submission.txt
+
+$ java -jar staff_prog.jar
+Enter User ID: fwl
+Password for fwl:
+Enter option code (h for help): h
+        l - List all students with submitted work.
+        g - Download a specified student's work.
+        m - Submit a mark for a specified student's work.
+        q - Quit the program.
+Enter option code (h for help): l
+The following students have made submissions:
+        adb9
+
+$ ./admin_prog
+Enter User ID: softly
+softly's password:
+Enter option code (h for help): d
+Enter the UID for the new student user: crl9
+Created Student User: crl9
+password: qepA=\2236
+
+$ ./student_prog
+Enter User ID: crl9
+crl9's password:
+Enter option code (h for help): s
+Location of file to submit: submission.txt
+
+$ java -jar staff_prog.jar
+Enter User ID: fwl
+Password for fwl:
+Enter option code (h for help): l
+The following students have made submissions:
+        crl9
+        adb9
+
+$ java -jar staff_prog.jar
+Enter User ID: fwl
+Password for fwl:
+Enter option code (h for help): g
+Enter the uid of the student to get the submission of: adb9
+Enter the location you wish to download this submission to: adb9-to-mark.txt
+
+$ java -jar staff_prog.jar
+Enter User ID: fwl
+Password for fwl:
+Enter option code (h for help): m
+Enter the uid of the student to submit a mark for: adb9
+/home/softly/svn/assign_cs22510/trunk/repository/students/adb9/results/result.txt
+Enter the mark (%): 75
+Enter any comments:
+A good piece of work, however some of the features I had asked for were not as good as expected. Also you need to work on ensuring the C elements work together properly. All in all a good piece of work though.
+
+$ ./student_prog
+Enter User ID: adb9
+adb9's password:
+Enter option code (h for help): m
+Results for user 'adb9':
+        Mark: 75% (A-)
+        Comments: A good piece of work, however some of the features I had asked for were not as good as expected. Also you need to work on ensuring the C elements work together properly. All in all a good piece of work
+
+$ ./admin_prog
+Enter User ID: softly
+softly's password:
+Enter option code (h for help): l
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Initilisation
+File:           repository/
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Initilisation
+File:           repository/logfile.log
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Initilisation
+File:           repository/.auth
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Created user softly
+File:           repository/.auth
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Initilisation
+File:           repository/assignment/
+========================================
+Date:           24/03/2011
+Time:           16:01:13
+User:           softly
+Program:        init
+Action:         Initilisation
+File:           repository/students/
+========================================
+Date:           24/03/2011
+Time:           16:02:42
+User:           softly
+Program:        admin
+Action:         Uploaded Assignment
+File:           repository/assignment/assignment.txt
+========================================
+Date:           24/03/2011
+Time:           16:03:55
+User:           softly
+Program:        admin
+Action:         Created Staff User
+File:           repository/.auth
+========================================
+Date:           24/03/2011
+Time:           16:04:39
+User:           softly
+Program:        admin
+Action:         Created Student User
+File:           repository/.auth
+========================================
+Date:           24/03/2011
+Time:           16:06:09
+User:           adb9
+Program:        stdnt
+Action:         Downloaded assignment
+File:           repository/assignment/
+========================================
+Date:           24/03/2011
+Time:           16:22:04
+User:           adb9
+Program:        stdnt
+Action:         Downloaded assignment
+File:           repository/assignment/
+========================================
+Date:           24/03/2011
+Time:           16:26:38
+User:           adb9
+Program:        stdnt
+Action:         Uploaded assignment
+File:           repository/students/adb9/
+========================================
+Date:           24/03/2011
+Time:           16:27:27
+User:           adb9
+Program:        stdnt
+Action:         Uploaded assignment
+File:           repository/students/adb9/
+========================================
+Date:           24/03/2011
+Time:           16:28:09
+User:           adb9
+Program:        stdnt
+Action:         Uploaded assignment
+File:           repository/students/adb9/
+========================================
+Date:           24/03/2011
+Time:           16:28:41
+User:           adb9
+Program:        stdnt
+Action:         Uploaded assignment
+File:           repository/students/adb9/
+========================================
+Date:           24/03/2011
+Time:           16:29:25
+User:           fwl
+Program:        staff
+Action:         Listed Submissions
+File:           repository/students/
+========================================
+Date:           24/03/2011
+Time:           16:30:17
+User:           softly
+Program:        admin
+Action:         Created Student User
+File:           repository/.auth
+========================================
+Date:           24/03/2011
+Time:           16:30:54
+User:           crl9
+Program:        stdnt
+Action:         Uploaded assignment
+File:           repository/students/crl9/
+========================================
+Date:           24/03/2011
+Time:           16:32:58
+User:           fwl
+Program:        staff
+Action:         Listed Submissions
+File:           repository/students/
+========================================
+Date:           24/03/2011
+Time:           16:33:48
+User:           fwl
+Program:        staff
+Action:         Downloaded assignment
+File:           repository/students/adb9/submission.txt
+========================================
+Date:           24/03/2011
+Time:           16:35:44
+User:           fwl
+Program:        staff
+Action:         Submitted mark for adb9
+File:           repository/students/adb9/results/result.txt
+========================================
+
+\end{verbatim}

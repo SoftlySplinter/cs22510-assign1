@@ -1,0 +1,1189 @@
+\section{Source code - Adminisrator Program}
+\normalsize
+\rmfamily
+\subsection{FileHandller.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ FileHandller.cpp\ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fstream$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$ios$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$iostream$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileHandller.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileLock.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{using}\ \textbf{namespace}\ std; \\
+\mbox{} \\
+\mbox{}FileHandller::\textbf{FileHandller}(std::string\ file)\ :\ \textbf{$\_$filename}(file)\ \{ \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}FileHandller::\textasciitilde{}\textbf{FileHandller}()\ \{ \\
+\mbox{} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}bool\ FileHandller::\textbf{append$\_$file}(std::string\ append$\_$text)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileLock\ \textbf{lock}($\_$filename); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::ofstream\ dest; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest.\textbf{open}($\_$filename.\textbf{data}(),\ ofstream::app); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest\ $<$$<$\ append$\_$text\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dest.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//\ lock\ automatically\ freed\ and\ unlocked\ here.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ \textbf{true}; \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (std::string\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//cout\ $<$$<$\ "{}Append\ Failed:\ "{}\ $<$$<$\ e\ $<$$<$\ endl;} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ \textbf{false}; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}bool\ FileHandller::\textbf{download$\_$file}(std::string\ dest$\_$filename)\ \textbf{throw}\ (std::string)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileLock\ \textbf{lock}($\_$filename); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ FileHandller::\textbf{copy}($\_$filename,\ dest$\_$filename); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//\ lock\ automatically\ freed\ and\ unlocked\ here.} \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (std::string\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Download\ Failed:\ "{}}\ $<$$<$\ e\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}bool\ FileHandller::\textbf{upload$\_$file}(std::string\ src$\_$filename\ , \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ dest$\_$filename)\ \textbf{throw}\ (std::string)\{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileLock\ \textbf{lock}(dest$\_$filename);\ \textit{//Lock\ the\ file\ if\ it\ exists.} \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{catch}\ (std::string\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}(e\ ==\ \texttt{"{}File\ Descriptor\ Error"{}})\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//\ Do\ nothing\ -\ the\ file\ needs\ to\ be\ created\ instead,\ defying\ the\ point\ of\ locking\ it.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ e;\ \textit{//Otherwise\ the\ file\ is\ locked.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ \textbf{copy}(src$\_$filename,\ dest$\_$filename); \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{//\ Lock\ automatically\ freed\ and\ unlocked\ here.} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}bool\ FileHandller::\textbf{copy}(std::string\ src$\_$filename,\ std::string\ dest$\_$filename)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ std::ifstream\ src; \\
+\mbox{}\ \ \ \ \ \ \ \ std::ofstream\ dest; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ src.\textbf{open}(src$\_$filename.\textbf{data}(),\ std::ios::binary); \\
+\mbox{}\ \ \ \ \ \ \ \ dest.\textbf{open}(dest$\_$filename.\textbf{data}(),\ std::ios::binary); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (!src.\textbf{is$\_$open}()\ $|$$|$\ !dest.\textbf{is$\_$open}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{return}\ \textbf{false}; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ dest\ $<$$<$\ src.\textbf{rdbuf}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ dest.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ src.\textbf{close}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ \textbf{true}; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{FileHandller.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ FileHandeller.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$FILEHANDLLER$\_$H \\
+\mbox{}\textbf{\#define}\ \ \ \ \ \ \ \ $\_$FILEHANDLLER$\_$H \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ A\ file\ handller\ for\ a\ single\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ Due\ to\ the\ nature\ of\ the\ repository\ and\ the\ need\ for\ locking,\ it\ is\ best\ that} \\
+\mbox{}\textit{\ *\ all\ file\ operations\ are\ handlled\ properly.\ This\ class\ enforces\ the\ locking} \\
+\mbox{}\textit{\ *\ mechanism\ (calling\ the\ File\ Lock\ class)\ and\ performs\ basic\ operations\ with} \\
+\mbox{}\textit{\ *\ files\ found\ in\ the\ repository.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ *\ }@see\textit{\ FileLock} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ FileHandller\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Creates\ a\ file\ handller\ for\ a\ given\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ filename\ \ \ \ \ \ The\ file\ to\ work\ with.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{FileHandller}(std::string\ filename); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Destructor.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{virtual}\ \textasciitilde{}\textbf{FileHandller}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Uploads\ the\ local\ sorce\ file\ to\ the\ destination\ file\ in\ the\ repository.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ src$\_$filename\ \ The\ location\ of\ the\ local\ file\ to\ upload.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ dest$\_$filename\ The\ destination\ of\ the\ source\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ copy()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{true}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ completed\ sucessfully} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{static}\ bool\ \textbf{upload$\_$file}(std::string\ src$\_$filename, \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ dest$\_$filename)\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Downloads\ the\ current\ file\ from\ the\ repository.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ dest$\_$filename\ The\ location\ of\ the\ file\ to\ download\ to.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@see\textit{\ copy()} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{true}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ completed\ sucessfully} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ bool\ \textbf{download$\_$file}(std::string\ dest$\_$filename)\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Appends\ a\ given\ string\ to\ the\ current\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ append$\_$text\ \ \ The\ string\ to\ append.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{true}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ completed\ sucessfully} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ bool\ \textbf{append$\_$file}(std::string\ append$\_$text); \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ current\ file\ in\ the\ repository.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ $\_$filename; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ Copies\ the\ src\ file\ to\ the\ destination\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ src$\_$filename\ \ The\ location\ of\ the\ file\ to\ copy.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@param\textit{\ dest$\_$filename\ The\ destination\ of\ the\ source\ file.} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ }@return\textit{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textbf{$<$code$>$}\textit{true}\textbf{$<$/code$>$}\textit{\ -\ If\ the\ operation\ completed\ sucessfully} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{static}\ bool\ \textbf{copy}(std::string\ src$\_$filename,\ std::string\ dest$\_$filename); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \ \ \ \ \ \ \textit{/*\ $\_$FILEHANDLLER$\_$H\ */} \\
+\mbox{} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{FileLock.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ FileLock.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$cstdlib$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fcntl.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$errno.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$unistd.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileLock.h"{}} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Structure\ contaning\ details\ on\ the\ lock.} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Neal\ Snooke} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{struct}\ flock*\ \textbf{file$\_$lock}(short\ type,\ short\ whence)\ \{ \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{struct}\ flock\ ret; \\
+\mbox{}\ \ \ \ ret.l$\_$type\ =\ type; \\
+\mbox{}\ \ \ \ ret.l$\_$start\ =\ 0; \\
+\mbox{}\ \ \ \ ret.l$\_$whence\ =\ whence; \\
+\mbox{}\ \ \ \ ret.l$\_$len\ =\ 0; \\
+\mbox{}\ \ \ \ ret.l$\_$pid\ =\ \textbf{getpid}(); \\
+\mbox{}\ \ \ \ \textbf{return}\ \&ret; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}FileLock::\textbf{FileLock}(std::string\ filename)\ \textbf{throw}\ (std::string)\ \{ \\
+\mbox{}\ \ \ \ $\_$file$\_$des\ =\ \textbf{open}(filename.\textbf{data}(),\ O$\_$RDWR); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{if}\ ($\_$file$\_$des\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{throw}\ std::\textbf{string}(\texttt{"{}File\ Descriptor\ Error"{}}); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ \textbf{lock}(); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}FileLock::\textasciitilde{}\textbf{FileLock}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{unlock}(); \\
+\mbox{}\ \ \ \ \textbf{close}($\_$file$\_$des); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ FileLock::\textbf{lock}()\ \textbf{throw}\ (std::string)\ \{ \\
+\mbox{}\ \ \ \ $\_$file$\_$lock\ =\ \textbf{file$\_$lock}(F$\_$WRLCK,\ SEEK$\_$SET); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{if}\ (\textbf{fcntl}($\_$file$\_$des,\ F$\_$SETLK,\ $\_$file$\_$lock)\ ==\ -1)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (errno\ ==\ EACCES\ $|$$|$\ errno\ ==\ EAGAIN)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ std::\textbf{string}(\texttt{"{}Already\ locked\ by\ another\ process"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ std::\textbf{string}(\texttt{"{}Unkown\ Error"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ FileLock::\textbf{unlock}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{fcntl}($\_$file$\_$des,\ F$\_$SETLKW,\ \textbf{file$\_$lock}(F$\_$UNLCK,\ SEEK$\_$SET)); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ FileLock::\textbf{get$\_$locked$\_$file}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{return}\ $\_$file$\_$des; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{FileLock.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ FileLock.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$FILELOCK$\_$H \\
+\mbox{}\textbf{\#define}\ \ \ \ \ \ \ \ $\_$FILELOCK$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Locks\ a\ File\ so\ that\ only\ this\ process\ can\ use\ it.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Neil\ Snooke\ (Locking\ Code).} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ FileLock\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Creates\ a\ Lock\ on\ the\ given\ file.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ filename\ \ The\ file\ to\ lock.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@throws\textit{\ std::string\ If\ the\ lock\ fails.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{FileLock}(std::string\ filename)\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Destructs,\ freeing\ the\ lock\ in\ the\ process.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{virtual}\ \textasciitilde{}\textbf{FileLock}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Returns\ the\ file\ descriptor\ of\ the\ locked\ file.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ file\ descriptor\ of\ the\ locked\ file.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@deprecated\textit{\ Use\ of\ std::fstream\ makes\ this\ unecessary.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ int\ \textbf{get$\_$locked$\_$file}(); \\
+\mbox{} \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \textit{/**\ A\ structure\ containing\ the\ details\ of\ the\ file\ lock.\ */} \\
+\mbox{}\ \ \ \ \textbf{struct}\ flock*\ $\_$file$\_$lock; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ file\ descriptor\ of\ the\ locked\ file.\ */} \\
+\mbox{}\ \ \ \ int\ $\_$file$\_$des; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Performs\ the\ lock\ operation.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@throws\textit{\ std::string\ If\ the\ operation\ was\ not\ sucessful.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ void\ \textbf{lock}()\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ Performs\ the\ unlock\ operation.\ */} \\
+\mbox{}\ \ \ \ void\ \textbf{unlock}(); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \ \ \ \ \ \ \textit{/*\ $\_$FILELOCK$\_$H\ */} \\
+\mbox{} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{Logger.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ Logger.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$bits/basic$\_$string.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$time.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$iostream$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fstream$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Logger.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileHandller.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Setup.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}User.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{using}\ \textbf{namespace}\ std; \\
+\mbox{} \\
+\mbox{}Logger::\textbf{Logger}()\ \{ \\
+\mbox{}\ \ \ \ $\_$file$\_$handller\ =\ \textbf{new}\ \textbf{FileHandller}(Setup::LOG$\_$FILE); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}Logger::\textasciitilde{}\textbf{Logger}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{delete}\ $\_$file$\_$handller; \\
+\mbox{}\ \ \ \ $\_$user\ =\ NULL; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ Logger::\textbf{set$\_$user}(User*\ user)\ \{ \\
+\mbox{}\ \ \ \ $\_$user\ =\ user; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ Logger::\textbf{log}(std::string\ activity,\ std::string\ filepath)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ bool\ complete\ =\ $\_$file$\_$handller-$>$\textbf{append$\_$file}(\textbf{generate$\_$log$\_$entry}(activity,\ filepath)); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}(!complete)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{log}(activity,\ filepath); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ Logger::\textbf{generate$\_$log$\_$entry}(std::string\ activity, \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ filepath)\ \{ \\
+\mbox{}\ \ \ \ std::string\ entry\ =\ \textbf{encode$\_$date$\_$time}(); \\
+\mbox{}\ \ \ \ entry\ +=\ \texttt{"{}\ admin:\ "{}}; \\
+\mbox{}\ \ \ \ entry\ +=\ $\_$user-$>$\textbf{get$\_$uid}()\ +\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}; \\
+\mbox{}\ \ \ \ entry\ +=\ activity\ +\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}; \\
+\mbox{}\ \ \ \ int\ base$\_$dir$\_$pos\ =\ filepath.\textbf{rfind}(Setup::BASE$\_$DIR); \\
+\mbox{}\ \ \ \ filepath\ =\ filepath.\textbf{replace}(base$\_$dir$\_$pos,\ base$\_$dir$\_$pos\ +\ Setup::BASE$\_$DIR.\textbf{length}(),\ \texttt{"{}"{}}); \\
+\mbox{}\ \ \ \ filepath\ =\ Setup::REPO$\_$DIR\ +\ filepath; \\
+\mbox{}\ \ \ \ entry\ +=\ filepath; \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{return}\ entry; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ Logger::\textbf{encode$\_$date$\_$time}()\ \{ \\
+\mbox{}\ \ \ \ time$\_$t\ rawtime; \\
+\mbox{}\ \ \ \ \textbf{struct}\ tm\ *\ timeinfo; \\
+\mbox{}\ \ \ \ char\ buffer\ [20]; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{time}(\&rawtime); \\
+\mbox{}\ \ \ \ timeinfo\ =\ \textbf{localtime}(\&rawtime); \\
+\mbox{}\ \ \ \ \textbf{strftime}(buffer,\ 20,\ \texttt{"{}\%Y-\%m-\%d-\%H-\%M-\%S"{}},\ timeinfo); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{return}\ std::\textbf{string}(buffer); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ Logger::\textbf{read$\_$log}()\ \{ \\
+\mbox{}\ \ \ \ ifstream\ \textbf{authstream}(Setup::LOG$\_$FILE.\textbf{data}()); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{if}\ (!authstream.\textbf{is$\_$open}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{throw}\ \textbf{string}(\texttt{"{}Error\ opening\ '"{}}\ +\ Setup::LOG$\_$FILE\ +\ \texttt{"{}'"{}}); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ string\ line; \\
+\mbox{}\ \ \ \ \textbf{getline}(authstream,\ line); \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{while}\ (authstream.\textbf{good}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (line.\textbf{data}()[0]\ !=\ \texttt{'\#'})\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}========================================"{}}\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ date$\_$time\ =\ line.\textbf{substr}(0,\ 20); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ line\ =\ line.\textbf{substr}(20,\ line.\textbf{length}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ date$\_$time\ =\ \textbf{decode$\_$date$\_$time}(date$\_$time); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ user$\_$type\ =\ line.\textbf{substr}(0,5); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ line\ =\ line.\textbf{substr}(7,\ line.\textbf{length}()); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ user\ =\ line.\textbf{substr}(0,\ line.\textbf{find}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}})); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ line\ =\ line.\textbf{substr}(line.\textbf{find}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}})+1,\ line.\textbf{length}()); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ action\ =\ line.\textbf{substr}(0,\ line.\textbf{find}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}})); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ line\ =\ line.\textbf{substr}(line.\textbf{find}(\texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}})+1,\ line.\textbf{length}()); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ date$\_$time; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}User:}\texttt{\textbackslash{}t\textbackslash{}t}\texttt{"{}}\ $<$$<$\ user\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Program:}\texttt{\textbackslash{}t}\texttt{"{}}\ $<$$<$\ user$\_$type\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Action:}\texttt{\textbackslash{}t\textbackslash{}t}\texttt{"{}}\ $<$$<$\ action\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}File:}\texttt{\textbackslash{}t\textbackslash{}t}\texttt{"{}}\ $<$$<$\ line\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{getline}(authstream,\ line); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}========================================"{}}\ $<$$<$\ endl; \\
+\mbox{} \\
+\mbox{}\ \ \ \ authstream.\textbf{close}(); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ Logger::\textbf{decode$\_$date$\_$time}(std::string\ date$\_$time)\ \{ \\
+\mbox{}\ \ \ \ \textbf{struct}\ tm\ tm; \\
+\mbox{}\ \ \ \ \textbf{strptime}(date$\_$time.\textbf{data}(),\ \texttt{"{}\%Y-\%m-\%d-\%H-\%M-\%S\ "{}},\ \&tm); \\
+\mbox{}\ \ \ \  \\
+\mbox{}\ \ \ \ char\ buffer[80]; \\
+\mbox{}\ \ \ \ \textbf{strftime}(buffer,\ 80,\ \texttt{"{}Date:}\texttt{\textbackslash{}t\textbackslash{}t}\texttt{\%d/\%m/\%Y}\texttt{\textbackslash{}n}\texttt{Time:}\texttt{\textbackslash{}t\textbackslash{}t}\texttt{\%H:\%M:\%S}\texttt{\textbackslash{}n}\texttt{"{}},\ \&tm); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{return}\ std::\textbf{string}(buffer); \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{Logger.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ Logger.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$LOGGER$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$LOGGER$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{} \\
+\mbox{}\textbf{class}\ User; \\
+\mbox{}\textbf{class}\ FileHandller; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ A\ class\ which\ handles\ all\ log\ file\ actions.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ This\ class\ deals\ with\ all\ operations\ that\ will\ be\ performed\ on} \\
+\mbox{}\textit{\ *\ the\ logfile,\ ensuring\ the\ file\ is\ locked\ whilst\ these\ actions} \\
+\mbox{}\textit{\ *\ are\ performed,\ etc.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ It\ also\ ensures\ that\ the\ same\ format\ is\ used,\ so\ that\ the} \\
+\mbox{}\textit{\ *\ logfile\ can\ be\ read\ and\ formatted\ back.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ Logger\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \textbf{Logger}(); \\
+\mbox{}\ \ \ \ \textasciitilde{}\textbf{Logger}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Sets\ user\ to\ be\ the\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ user\ The\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ void\ \textbf{set$\_$user}(User\ *user); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Makes\ an\ entry\ to\ the\ logfile.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ activity\ \ The\ activity\ that\ was\ performed.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ filepath\ \ The\ path\ to\ the\ file\ the\ activity\ was\ performed\ on.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@see\textit{\ Logger::generateLogEntry(std::string,\ std::string)} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ void\ \textbf{log}(std::string\ activity,\ std::string\ filepath); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Prints\ the\ logfile\ in\ a\ human\ readable\ format.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@see\textit{\ Logger::decodeDateTime(std::string)} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ void\ \textbf{read$\_$log}(void); \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \textit{/**\ Aggregation\ to\ the\ User\ */} \\
+\mbox{}\ \ \ \ User\ *\ $\_$user; \\
+\mbox{} \\
+\mbox{}\ \ \ \ FileHandller\ *\ $\_$file$\_$handller; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Generates\ the\ text\ for\ the\ log\ entry.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ activity\ \ The\ activity\ that\ was\ performed.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ filepath\ \ The\ path\ to\ the\ file\ the\ activity\ was\ performed\ on.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ textual\ form\ of\ a\ log\ entry.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@see\textit{\ Logger::encodeDateTime()} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{generate$\_$log$\_$entry}(std::string\ activity,\ std::string\ filepath); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Encodes\ the\ current\ Date\ and\ Time\ into\ the\ string\ format\ used\ by\ the\ log} \\
+\mbox{}\textit{\ \ \ \ \ *\ file.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ current\ Date\ and\ Time\ into\ the\ string\ format\ used\ by\ the\ log} \\
+\mbox{}\textit{\ \ \ \ \ *\ file.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{encode$\_$date$\_$time}(void); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Decodes\ the\ Date\ and\ Time\ from\ a\ log\ entry\ into\ a\ human-readable\ format.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ date$\_$time\ \ The\ date\ and\ time\ to\ decode\ into\ a\ human\ readable} \\
+\mbox{}\textit{\ \ \ \ \ *\ format} \\
+\mbox{}\textit{\ \ \ \ \ *\ } \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ Date\ and\ Time\ from\ a\ log\ entry\ into\ a\ human-readable\ format.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{decode$\_$date$\_$time}(std::string\ date$\_$time); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \textit{/*\ $\_$LOGGER$\_$H\ */} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{main.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ main.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdio.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$iostream$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Setup.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}User.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Logger.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserCreator.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserType.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{using}\ \textbf{namespace}\ std; \\
+\mbox{} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$CREATE$\_$ASSIGN\ \ \texttt{'c'} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$CREATE$\_$STAFF\ \ \ \texttt{'s'} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$CREATE$\_$STDNT\ \ \ \texttt{'d'} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$PRINT$\_$LOG\ \ \ \ \ \ \texttt{'l'} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$HELP\ \ \ \ \ \ \ \ \ \ \ \texttt{'h'} \\
+\mbox{}\textbf{\#define}\ FLAG$\_$NO$\_$OPTION\ \ \ \ \ \ \texttt{'n'} \\
+\mbox{} \\
+\mbox{}void\ \textbf{print$\_$help}()\ \{ \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}\ $<$$<$\ FLAG$\_$CREATE$\_$ASSIGN\ $<$$<$\ \texttt{"{}\ [file]:\ Upload\ Assignment}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}\ $<$$<$\ FLAG$\_$CREATE$\_$STAFF\ $<$$<$\ \texttt{"{}\ [uid]:\ Create\ a\ new\ Staff\ User}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}\ $<$$<$\ FLAG$\_$CREATE$\_$STDNT\ $<$$<$\ \texttt{"{}\ [uid]:\ Create\ a\ new\ Student\ User}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}}\texttt{\textbackslash{}t}\texttt{"{}}\ $<$$<$\ FLAG$\_$PRINT$\_$LOG\ $<$$<$\ \texttt{"{}:\ Read\ the\ log\ file}\texttt{\textbackslash{}n}\texttt{"{}}; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}int\ \textbf{main}(int\ argc,\ char**\ argv)\ \{ \\
+\mbox{}\ \ \ \ \textbf{try}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ char\ flag\ =\ FLAG$\_$NO$\_$OPTION; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ Logger\ *logger\ =\ \textbf{new}\ \textbf{Logger}(); \\
+\mbox{}\ \ \ \ \ \ \ \ User\ *\ user\ =\ User::\textbf{login}(logger); \\
+\mbox{}\ \ \ \ \ \ \ \ logger-$>$\textbf{set$\_$user}(user); \\
+\mbox{}\ \ \ \ \ \ \ \ Setup\ *\ setup\ =\ \textbf{new}\ \textbf{Setup}(logger); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (argc\ $<$\ 2)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textit{//Allow\ the\ user\ to\ input\ their\ own\ choice\ rather\ than\ forcing\ them\ to\ use\ command\ line\ arguments.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{do}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Enter\ option\ code\ (h\ for\ help):\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cin\ $>$$>$\ flag; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{switch}\ (flag)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$ASSIGN: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$STAFF: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$STDNT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$PRINT$\_$LOG: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$HELP: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{print$\_$help}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//Intended\ fallthrough\ so\ that\ the\ program\ doesn't\ continue\ and\ exit.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{default}: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flag\ =\ FLAG$\_$NO$\_$OPTION; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{while}\ (flag\ ==\ FLAG$\_$NO$\_$OPTION); \\
+\mbox{}\ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ flag\ =\ argv[1][1]; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ option; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{switch}\ (flag)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$ASSIGN: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (argc\ $<$\ 3)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Enter\ the\ file\ (including\ path)\ of\ the\ assignment:\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cin\ $>$$>$\ option; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ argv[2]; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ setup-$>$\textbf{upload$\_$assignment}(option); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$STAFF: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (argc\ $<$\ 3)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Enter\ the\ UID\ for\ the\ new\ staff\ user:\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cin\ $>$$>$\ option; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ argv[2]; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user-$>$\textbf{add$\_$staff}(option); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$CREATE$\_$STDNT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (argc\ $<$\ 3)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Enter\ the\ UID\ for\ the\ new\ student\ user:\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cin\ $>$$>$\ option; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textbf{else}\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ option\ =\ argv[2]; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ user-$>$\textbf{add$\_$student}(option); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textit{//TODO\ add\ something\ to\ create\ dir\ for\ the\ student.} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$PRINT$\_$LOG: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logger-$>$\textbf{read$\_$log}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{case}\ FLAG$\_$HELP: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{print$\_$help}(); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{default}: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ std::\textbf{string}(\texttt{"{}Unrecognised\ Option"{}}); \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{delete}\ logger; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{delete}\ user; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{delete}\ setup; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ (EXIT$\_$SUCCESS); \\
+\mbox{}\ \ \ \ \}\ \textbf{catch}\ (std::string\ e)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ argv[0]\ $<$$<$\ \texttt{"{}:\ "{}}\ $<$$<$\ e\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Useage:\ "{}}\ $<$$<$\ argv[0]\ $<$$<$\ \texttt{"{}\ [OPTION]\ [INPUT]"{}}\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Try\ `"{}}\ $<$$<$\ argv[0]\ $<$$<$\ \texttt{"{}\ -h'\ for\ more\ information"{}}\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{return}\ (EXIT$\_$FAILURE); \\
+\mbox{}\ \ \ \ \}\ \textbf{catch}\ (char\ \textbf{const}*\ c)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ c\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{Setup.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ Setup.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$iostream$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fstream$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Setup.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileHandller.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Logger.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{using}\ \textbf{namespace}\ std; \\
+\mbox{} \\
+\mbox{}std::string\ \textbf{get$\_$base$\_$dir}()\ \{ \\
+\mbox{}\ \ \ \ string\ line\ =\ \texttt{"{}"{}}; \\
+\mbox{}\ \ \ \ ifstream\ \textbf{config$\_$file}(\texttt{"{}config"{}}); \\
+\mbox{}\ \ \ \ \textbf{if}(config$\_$file.\textbf{is$\_$open}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{getline}(config$\_$file,\ line); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ line\ =\ line\ +\ \texttt{"{}/"{}}; \\
+\mbox{}\ \ \ \ \textbf{return}\ line; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ \textbf{get$\_$repo$\_$dir}()\ \{ \\
+\mbox{}\ \ \ \ string\ line\ =\ \texttt{"{}"{}}; \\
+\mbox{}\ \ \ \ ifstream\ \textbf{config$\_$file}(\texttt{"{}config"{}}); \\
+\mbox{}\ \ \ \ \textbf{if}(config$\_$file.\textbf{is$\_$open}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{getline}(config$\_$file,\ line); \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{getline}(config$\_$file,\ line); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ line\ =\ line\ +\ \texttt{"{}/"{}}; \\
+\mbox{}\ \ \ \ \textbf{return}\ line; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\textit{//\ Change\ this\ to\ change\ the\ base\ directory.} \\
+\mbox{}\textbf{const}\ std::string\ Setup::BASE$\_$DIR\ =\ \textbf{get$\_$base$\_$dir}(); \\
+\mbox{}\textbf{const}\ std::string\ Setup::REPO$\_$DIR\ =\ \textbf{get$\_$repo$\_$dir}(); \\
+\mbox{} \\
+\mbox{}\textit{//\ Constant\ definitions.} \\
+\mbox{}\textbf{const}\ std::string\ Setup::AUTH$\_$FILE\ =\ BASE$\_$DIR+\texttt{"{}.auth"{}}; \\
+\mbox{}\textbf{const}\ std::string\ Setup::LOG$\_$FILE\ =\ BASE$\_$DIR+\texttt{"{}logfile.log"{}}; \\
+\mbox{}\textbf{const}\ std::string\ Setup::ASSIGNMENT$\_$DIR\ =\ BASE$\_$DIR+\texttt{"{}assignment/"{}}; \\
+\mbox{}\textbf{const}\ std::string\ Setup::STUDENT$\_$DIR\ =\ BASE$\_$DIR+\texttt{"{}students/"{}}; \\
+\mbox{} \\
+\mbox{}Setup::\textbf{Setup}(Logger*\ logger):\ \textbf{$\_$logger}(logger)\ \{ \\
+\mbox{} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}Setup::\textasciitilde{}\textbf{Setup}()\ \{ \\
+\mbox{}\ \ \ \ $\_$logger\ =\ NULL; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}void\ Setup::\textbf{upload$\_$assignment}(std::string\ src)\ \textbf{throw}\ (std::string)\ \{ \\
+\mbox{}\ \ \ \ int\ pos\ =\ src.\textbf{find$\_$last$\_$of}(\texttt{'/'}); \\
+\mbox{}\ \ \ \ std::string\ filename\ =\ src.\textbf{substr}(pos+1,\ src.\textbf{length}()); \\
+\mbox{} \\
+\mbox{}\ \ \ \ FileHandller::\textbf{upload$\_$file}(src,\ ASSIGNMENT$\_$DIR+filename); \\
+\mbox{}\ \ \ \  \\
+\mbox{}\ \ \ \ $\_$logger-$>$\textbf{log}(\texttt{"{}Uploaded\ Assignment"{}},\ ASSIGNMENT$\_$DIR+filename); \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{Setup.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ Setup.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$SETUP$\_$H \\
+\mbox{}\textbf{\#define}\ \ \ \ \ \ \ \ $\_$SETUP$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{} \\
+\mbox{}\textbf{class}\ User; \\
+\mbox{}\textbf{class}\ Logger; \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ A\ class\ to\ hadnle\ the\ setup\ of\ the\ repository.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ This\ class\ was\ orignally\ meant\ to\ handle\ the\ setup\ of\ the} \\
+\mbox{}\textit{\ *\ retpository.\ However,\ due\ to\ a\ lack\ of\ time,\ I\ put\ the} \\
+\mbox{}\textit{\ *\ majority\ of\ the\ code\ for\ this\ in\ the\ makefile\ as\ BASH} \\
+\mbox{}\textit{\ *\ commands.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ Instead,\ this\ contains\ constants\ to\ locations\ in\ the} \\
+\mbox{}\textit{\ *\ repository\ and\ allows\ for\ uploading\ of\ an\ assignment} \\
+\mbox{}\textit{\ *\ file.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ Setup\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \textit{/**\ The\ Base\ Directory\ of\ the\ repository.\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ BASE$\_$DIR; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ Repository\ directory\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ REPO$\_$DIR; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ location\ of\ the\ authentication\ file\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ AUTH$\_$FILE; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ location\ of\ the\ log\ file\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ LOG$\_$FILE; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ location\ of\ the\ assignment\ directory\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ ASSIGNMENT$\_$DIR; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ location\ of\ the\ assignment\ directory\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ \textbf{const}\ std::string\ STUDENT$\_$DIR; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Aggregate\ the\ User\ and\ the\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ user\ \ \ \ \ \ The\ User\ to\ aggregate\ to.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ The\ Logger\ to\ aggregate\ to.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@deprecated\textit{\ \ Unneeded.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{Setup}(User\ *user,\ Logger\ *logger); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Aggregate\ the\ User\ and\ the\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ user\ \ \ \ \ \ The\ User\ to\ aggregate\ to.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ The\ Logger\ to\ aggregate\ to.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{Setup}(Logger\ *logger); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ Removes\ the\ aggregation\ */} \\
+\mbox{}\ \ \ \ \textbf{virtual}\ \textasciitilde{}\textbf{Setup}(void); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ Sets\ up\ the\ entire\ repository.\ */} \\
+\mbox{}\ \ \ \ void\ \textbf{run$\_$setup}(void); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Allows\ an\ assignment\ to\ be\ uploaded.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ src\ \ \ The\ location\ of\ the\ local\ assignment\ file\ to\ upload.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ void\ \textbf{upload$\_$assignment}(std::string\ src)\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Aggregation\ to\ the\ user} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@deprecated\textit{\ \ Unneeded.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ User*\ $\_$user; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ Aggregation\ to\ the\ logger\ */} \\
+\mbox{}\ \ \ \ Logger*\ $\_$logger; \\
+\mbox{} \\
+\mbox{}\ \ \ \ void\ \textbf{create$\_$dir$\_$structure}(void); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \ \ \ \ \ \ \textit{/*\ $\_$SETUP$\_$H\ */} \\
+\mbox{} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{User.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/**\ User.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$iostream$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$fstream$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$cstdio$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Logger.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$termios.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$unistd.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}User.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserCreator.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Setup.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserType.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{using}\ \textbf{namespace}\ std; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ Sets\ whether\ the\ stdin\ stream\ should\ echo\ to} \\
+\mbox{}\textit{\ *\ the\ console\ or\ not.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@param\textit{\ enable\ If\ stdin\ echo\ is\ enabled\ or\ not.} \\
+\mbox{}\textit{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ defaults\ to\ true.} \\
+\mbox{}\textit{\ *\ Note:\ Linux\ systems\ only.} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Unknown\ (taken\ from\ Stack\ Overflow).} \\
+\mbox{}\textit{\ */} \\
+\mbox{}void\ \textbf{SetStdinEcho}(bool\ enable\ =\ \textbf{true})\ \{ \\
+\mbox{}\ \ \ \ \textbf{struct}\ termios\ tty; \\
+\mbox{}\ \ \ \ \textbf{tcgetattr}(STDIN$\_$FILENO,\ \&tty); \\
+\mbox{}\ \ \ \ \textbf{if}\ (!enable) \\
+\mbox{}\ \ \ \ \ \ \ \ tty.c$\_$lflag\ \&=\ \textasciitilde{}ECHO; \\
+\mbox{}\ \ \ \ \textbf{else} \\
+\mbox{}\ \ \ \ \ \ \ \ tty.c$\_$lflag\ $|$=\ ECHO; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{tcsetattr}(STDIN$\_$FILENO,\ TCSANOW,\ \&tty); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}User\ *User::$\_$INSTANCE\ =\ NULL; \\
+\mbox{} \\
+\mbox{}User::\textbf{User}(Logger\ *logger,\ std::string\ uid):\ \textbf{$\_$logger}(logger),\ \textbf{$\_$uid}(uid)\ \{ \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}User::\textasciitilde{}\textbf{User}()\ \{ \\
+\mbox{}\ \ \ \ $\_$logger\ =\ NULL; \\
+\mbox{}\ \ \ \ $\_$INSTANCE\ =\ NULL; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}User*\ User::\textbf{login}(Logger\ *logger)\ \textbf{throw}\ (std::string)\ \{ \\
+\mbox{}\ \ \ \ \textit{//\ TODO\ decide\ if\ it\ would\ be\ best\ to\ break\ this\ function\ down\ further.} \\
+\mbox{}\ \ \ \ \textbf{if}\ ($\_$INSTANCE\ ==\ NULL)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ user; \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ pass; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}Enter\ User\ ID:\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ cin\ $>$$>$\ user; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ \texttt{"{}"{}}\ $<$$<$\ user\ $<$$<$\ \texttt{"{}'s\ password:\ "{}}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{SetStdinEcho}(\textbf{false}); \\
+\mbox{}\ \ \ \ \ \ \ \ cin\ $>$$>$\ pass; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{SetStdinEcho}(\textbf{true}); \\
+\mbox{}\ \ \ \ \ \ \ \ cout\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ ifstream\ \textbf{authstream}(Setup::AUTH$\_$FILE.\textbf{data}()); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (!authstream.\textbf{is$\_$open}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ t\ =\ \texttt{"{}Error\ opening\ '"{}}\ +\ Setup::AUTH$\_$FILE\ +\ \texttt{"{}'"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ t; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ bool\ authenticated\ =\ \textbf{false}; \\
+\mbox{}\ \ \ \ \ \ \ \ string\ line; \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{while}\ (authstream.\textbf{good}())\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{getline}(authstream,\ line); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (line.\textbf{data}()[0]\ !=\ \texttt{'\#'})\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{if}\ (line.\textbf{find}((user\ +\ \texttt{"{}\ admin\ "{}}\ +\ pass).\textbf{data}())\ !=\ string::npos)\ \{\ \textit{//\ TODO\ See\ if\ this\ can\ be\ made\ more\ secure.} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ authenticated\ =\ \textbf{true}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \} \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{if}\ (!authenticated)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ std::string\ t\ =\ \texttt{"{}Invalid\ Username/Password"{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{throw}\ t; \\
+\mbox{}\ \ \ \ \ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ $\_$INSTANCE\ =\ \textbf{new}\ \textbf{User}(logger,\ user); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ authstream.\textbf{close}(); \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ \textbf{return}\ $\_$INSTANCE; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ User::\textbf{get$\_$uid}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{return}\ $\_$uid; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ User::\textbf{add$\_$user}(std::string\ uid,\ UserType\ type)\ \{ \\
+\mbox{}\ \ \ \ UserCreator\ \textbf{creator}(uid,\ type); \\
+\mbox{}\ \ \ \ \textbf{return}\ creator.\textbf{create$\_$user}(); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ User::\textbf{add$\_$staff}(std::string\ uid)\ \{ \\
+\mbox{}\ \ \ \ \textbf{enum}\ UserType\ type\ =\ STAFF; \\
+\mbox{}\ \ \ \ std::string\ pass\ =\ \textbf{add$\_$user}(uid,\ type); \\
+\mbox{}\ \ \ \ $\_$logger-$>$\textbf{log}(\texttt{"{}Created\ Staff\ User"{}},\ Setup::AUTH$\_$FILE); \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}Created\ Staff\ User:\ "{}}\ $<$$<$\ uid\ $<$$<$\ endl\ $<$$<$\ \texttt{"{}password:\ "{}}\ $<$$<$\ pass\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \textbf{return}\ pass; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ User::\textbf{add$\_$student}(std::string\ uid)\ \{ \\
+\mbox{}\ \ \ \ \textbf{enum}\ UserType\ type\ =\ STUDENT; \\
+\mbox{}\ \ \ \ std::string\ pass\ =\ \textbf{add$\_$user}(uid,\ type); \\
+\mbox{}\ \ \ \ $\_$logger-$>$\textbf{log}(\texttt{"{}Created\ Student\ User"{}},\ Setup::AUTH$\_$FILE); \\
+\mbox{}\ \ \ \ cout\ $<$$<$\ \texttt{"{}Created\ Student\ User:\ "{}}\ $<$$<$\ uid\ $<$$<$\ endl\ $<$$<$\ \texttt{"{}password:\ "{}}\ $<$$<$\ pass\ $<$$<$\ endl; \\
+\mbox{}\ \ \ \ \textbf{return}\ pass; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{UserCreator.cpp}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ UserCreator.cpp\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$stdlib.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$time.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$sys/stat.h$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$sys/types.h$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserCreator.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}Setup.h"{}} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}FileHandller.h"{}} \\
+\mbox{} \\
+\mbox{}UserCreator::\textbf{UserCreator}(std::string\ uid,\ \textbf{enum}\ UserType\ type)\ :\ \textbf{$\_$uid}(uid),\ \textbf{$\_$type}(type)\ \{ \\
+\mbox{}\ \ \ \ $\_$file$\_$handller\ =\ \textbf{new}\ \textbf{FileHandller}(Setup::AUTH$\_$FILE); \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}UserCreator::\textasciitilde{}\textbf{UserCreator}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{delete}\ $\_$file$\_$handller; \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ UserCreator::\textbf{create$\_$user}()\ \{ \\
+\mbox{}\ \ \ \ std::string\ passwd\ =\ \textbf{generate$\_$password}(); \\
+\mbox{}\ \ \ \ std::string\ entry\ =\ $\_$uid\ +\ \texttt{"{}\ "{}}; \\
+\mbox{}\ \ \ \ \textbf{switch}\ ($\_$type)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{case}\ STAFF: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ entry\ +=\ \texttt{"{}staff\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{case}\ STUDENT: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ entry\ +=\ \texttt{"{}stdnt\ "{}}; \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{mkdir}((Setup::STUDENT$\_$DIR+$\_$uid+\texttt{"{}/"{}}).\textbf{data}(),\ 0744); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{mkdir}((Setup::STUDENT$\_$DIR+$\_$uid+\texttt{"{}/results/"{}}).\textbf{data}(),\ 0744); \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{break}; \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{default}: \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ entry\ =\ \texttt{"{}\#"{}}\ +\ entry;\ \textit{//Something\ went\ wrong\ so\ comment\ it\ out.} \\
+\mbox{}\ \ \ \ \} \\
+\mbox{}\ \ \ \ entry\ +=\ passwd; \\
+\mbox{}\ \ \ \ $\_$file$\_$handller-$>$\textbf{append$\_$file}(entry); \\
+\mbox{}\ \ \ \ \textbf{return}\ passwd; \\
+\mbox{} \\
+\mbox{}\} \\
+\mbox{} \\
+\mbox{}std::string\ UserCreator::\textbf{generate$\_$password}()\ \{ \\
+\mbox{}\ \ \ \ \textbf{srand}(\textbf{time}(NULL)); \\
+\mbox{}\ \ \ \ int\ passwd$\_$length\ =\ 8\ +\ (\textbf{rand}()\ \%\ 5); \\
+\mbox{}\ \ \ \ std::string\ passwd\ =\ \texttt{"{}"{}}; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{for}\ (int\ i\ =\ 0;\ i\ $<$\ passwd$\_$length;\ i++)\ \{ \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/*\ Modulo\ of\ the\ last\ character\ of\ the\ characters\ we\ want\ (z,\ as} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ lowercase\ is\ after\ uppercase\ and\ numbers)\ minus\ the\ first\ character,} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ *\ plus\ one\ to\ make\ it\ encompass\ them\ all.\ Plus\ the\ starting\ character).} \\
+\mbox{}\textit{\ \ \ \ \ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \ \ \ \ char\ c\ =\ \textbf{rand}()\ \%\ (\texttt{'z'}\ -\ \texttt{'0'}\ +\ 1)\ +\ \texttt{'0'}; \\
+\mbox{}\ \ \ \ \ \ \ \ passwd\ +=\ c; \\
+\mbox{}\ \ \ \ \} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{return}\ passwd; \\
+\mbox{}\} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{UserCreator.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ UserCreator.h\ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$USERCREATOR$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$USERCREATOR$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserType.h"{}} \\
+\mbox{} \\
+\mbox{}\textbf{class}\ User; \\
+\mbox{}\textbf{class}\ Logger; \\
+\mbox{}\textbf{class}\ FileHandller; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Handles\ the\ creation\ of\ users.} \\
+\mbox{}\textit{\ *\ } \\
+\mbox{}\textit{\ *\ This\ classes\ defines\ the\ behaviour\ to\ use\ when\ creating} \\
+\mbox{}\textit{\ *\ new\ users,\ ensuring\ this\ behaviour\ is\ standardised.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ }@author\textit{\ Alexander\ Brown} \\
+\mbox{}\textit{\ *\ }@version\textit{\ 1.0} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ UserCreator\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Constructs\ a\ UserCreator\ with\ the\ given\ uid\ and\ type.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{UserCreator}(std::string\ uid,\ \textbf{enum}\ UserType\ type); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Destructs\ the\ UserCreator.\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textasciitilde{}\textbf{UserCreator}(); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Writes\ the\ user\ to\ the\ .auth\ file\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ \textbf{create$\_$user}(); \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ file\ handller\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ FileHandller\ *\ $\_$file$\_$handller; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ User\ ID\ of\ the\ user\ to\ create\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ $\_$uid; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ generated\ password\ for\ the\ User\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ $\_$password; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ The\ type\ of\ the\ User\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{enum}\ UserType\ $\_$type; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{/**\ Generates\ a\ random\ password\ */} \\
+\mbox{}\ \ \ \ \ \ \ \ std::string\ \textbf{generate$\_$password}(); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \textit{/*\ $\_$USERCREATOR$\_$H\ */} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{User.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ User.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$USER$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$USER$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{\#include}\ \texttt{$<$string$>$} \\
+\mbox{}\textbf{\#include}\ \texttt{"{}UserType.h"{}} \\
+\mbox{} \\
+\mbox{}\textit{//\ Define\ the\ Logger\ class\ to\ stop\ strange\ dependancy\ errors.} \\
+\mbox{}\textbf{class}\ Logger; \\
+\mbox{} \\
+\mbox{}\textit{/**} \\
+\mbox{}\textit{\ *\ }@brief\textit{\ Defines\ the\ User\ for\ the\ Administator\ Programs\ and\ associated\ methods.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ This\ class\ is\ mostly\ used\ to\ control\ the\ logging\ in\ and\ out\ of\ the\ User,\ as} \\
+\mbox{}\textit{\ *\ well\ as\ a\ few\ base\ actions\ (adding\ Users)\ so\ most\ items\ can\ be\ set\ up\ without} \\
+\mbox{}\textit{\ *\ too\ much\ hastle.} \\
+\mbox{}\textit{\ *} \\
+\mbox{}\textit{\ *\ This\ class\ is\ a\ singleton,\ hence\ the\ private\ constructor,\ and\ can\ only\ be} \\
+\mbox{}\textit{\ *\ instantiated\ through\ the\ login\ method.} \\
+\mbox{}\textit{\ */} \\
+\mbox{}\textbf{class}\ User\ \{ \\
+\mbox{}\textbf{public}: \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Logs\ in\ a\ user.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ The\ aggregation\ to\ the\ logger.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ single\ instance\ of\ the\ User.\ Note\ that\ if\ the\ User\ is\ already} \\
+\mbox{}\textit{\ \ \ \ \ *\ logged\ in\ then\ this\ will\ still\ return\ the\ instance,\ just\ without\ any} \\
+\mbox{}\textit{\ \ \ \ \ *\ ability\ to\ re-login.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ User*\ \textbf{login}(Logger\ *logger)\ \textbf{throw}\ (std::string); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Destructor.\ As\ ISTANCE\ is\ the\ only\ pointer\ that\ needs\ to\ be\ freed\ in\ this} \\
+\mbox{}\textit{\ \ \ \ \ *\ class\ and\ is\ the\ one\ this\ destructor\ will\ be\ called\ upon,\ this\ doesn't} \\
+\mbox{}\textit{\ \ \ \ \ *\ acutally\ do\ much,\ other\ than\ setting\ a\ few\ nulls.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textasciitilde{}\textbf{User}(void); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Adds\ a\ member\ of\ staff\ to\ the\ program.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ uid\ \ \ The\ User\ ID\ of\ the\ Staff\ to\ add.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ The\ auto-generated\ password.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@see\textit{\ User::addUser(std::string,\ enum\ UserType)} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{add$\_$staff}(std::string\ uid); \\
+\mbox{} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Adds\ a\ student\ to\ the\ program.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ uid\ \ \ The\ User\ ID\ of\ the\ Student\ to\ add.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ The\ auto-generated\ password.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@see\textit{\ User::addUser(std::string,\ enum\ UserType)} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{add$\_$student}(std::string\ uid); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Returns\ the\ User\ ID\ of\ the\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@return\textit{\ The\ User\ ID\ of\ the\ current\ User.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{get$\_$uid}(void); \\
+\mbox{} \\
+\mbox{}\textbf{private}: \\
+\mbox{}\ \ \ \ \textit{/**\ The\ single\ instance\ of\ this\ class\ */} \\
+\mbox{}\ \ \ \ \textbf{static}\ User\ *\ $\_$INSTANCE; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ Aggregation\ to\ the\ logger.\ */} \\
+\mbox{}\ \ \ \ Logger\ *\ $\_$logger; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**\ The\ User\ ID\ of\ the\ User,\ used\ for\ logging\ purposes.\ */} \\
+\mbox{}\ \ \ \ std::string\ $\_$uid; \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Private\ Constructor\ to\ ensure\ this\ remains\ a\ singleton.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ logger\ \ \ \ The\ aggregation\ to\ the\ Logger.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ uid\ \ \ \ \ \ \ The\ User\ ID\ of\ this\ User.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ \textbf{User}(Logger\ *logger,\ std::string\ uid); \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{/**} \\
+\mbox{}\textit{\ \ \ \ \ *\ Adds\ a\ user\ to\ the\ program,\ returning\ the\ auto-generated\ password.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ uid\ \ \ The\ User\ ID\ of\ the\ user\ to\ create.} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ type\ \ The\ type\ of\ the\ User.} \\
+\mbox{}\textit{\ \ \ \ \ *} \\
+\mbox{}\textit{\ \ \ \ \ *\ }@param\textit{\ The\ auto-generated\ password.} \\
+\mbox{}\textit{\ \ \ \ \ */} \\
+\mbox{}\ \ \ \ std::string\ \textbf{add$\_$user}(std::string\ uid,\ \textbf{enum}\ UserType\ type); \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \textit{/*\ $\_$USER$\_$H\ */} \\
+
+\clearpage
+\normalsize
+\rmfamily
+\subsection{UserType.h}
+\scriptsize
+\sffamily
+% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\noindent
+\mbox{}\textit{/*\ UserType.h\ \ Copyright\ (c)\ Alexander\ Brown,\ March\ 2011\ */} \\
+\mbox{} \\
+\mbox{}\textbf{\#ifndef}\ $\_$USERTYPE$\_$H \\
+\mbox{}\textbf{\#define}\ $\_$USERTYPE$\_$H \\
+\mbox{} \\
+\mbox{}\textbf{enum}\ UserType\ \{ \\
+\mbox{}\ \ \ \ STAFF\ =\ 0, \\
+\mbox{}\ \ \ \ STUDENT\ =\ 1 \\
+\mbox{}\}; \\
+\mbox{} \\
+\mbox{}\textbf{\#endif}\ \ \textit{/*\ $\_$USERTYPE$\_$H\ */} \\
+
+\clearpage

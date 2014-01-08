@@ -1,0 +1,94 @@
+digraph StaffUML {
+	
+        fontname = "Monospace"
+        fontsize = 10
+
+        node [
+                fontname = "Monospace"
+                fontsize = 10
+                shape = "record"
+        ]
+
+        edge [
+                fontname = "Monospace"
+                fontsize = 10
+        ]
+        
+        StaffProgram [
+		label = "{StaffProgram|||+ static main(String[] args) : void\l}"
+        ]
+        
+        subgraph user {
+		User [
+			label = "{User|- final static INSTANCE : User\l- marker : Marker\l- logger : Logger\l- final uid : String\l|- User(String uid) : User\l|+ static login(string uid, string password) : User\l+ listSubmittedUIDs() : void\l+ getAssignment(String uid) : void\l+ mark(String uid) : void\l}"
+		]
+		
+		Marker [
+			label = "{Marker|- final uid : String\l- mark : int\l- comments : String\l|+ Marker(String uid)\l|- mark() : void\l- inputMark() : void\l- inputComments() : void\l}"
+		]
+        }
+        
+        subgraph file {
+		FileLock [
+			label = "{FileLock|- filename : String\l|+ FileLock(String filename)\l|- lock() : void\l+ unlock() : void\l}"
+		]
+		
+		FileHandller [
+			label = "{FileHandller|- filename : String\l|+ FileHandller(String filename)\l|+ downloadFile(String dest) : File\l+ static uploadFile(String src, String dest) : void\l+ appendFile(String appendText) : void\l- copy(String src, String dest) : void\l}"
+		]
+        }
+        
+        subgraph log {
+		Logger [
+			label = "{Logger|- user : User\l|+ Logger() : Logger\l|+ log(String activity, String filepath) : void\l- generateLogEntry(String activity) : string\l- encodeCurrentDateTime() : string\l}"
+		]
+        }
+        
+        edge [
+		label = ""
+		arrowhead = "none"
+		headlabel = "    1..1"
+        ]
+        
+        User -> Marker
+        
+        edge [
+		label = ""
+		arrowhead = "none"
+		headlabel = "    1..1"
+		taillabel = "    1..1"
+        ]
+        
+        User -> Logger
+        
+        edge [
+		arrowhead = "none"
+		label = "1..1"
+		headlabel = ""
+		taillabel = ""
+        ]
+        
+        User -> User
+        
+        
+        
+        edge [
+		label="<<instantiate>>"
+		arrowhead = "vee"
+		style = "dashed"
+        ]
+        
+        StaffProgram -> User
+        StaffProgram -> Logger
+        
+        edge [
+		label="<<use>>"
+		arrowhead = "vee"
+		style = "dashed"
+        ]
+        
+        FileHandller -> FileLock
+        Marker -> FileHandller
+        Logger -> FileHandller
+        User -> FileHandller
+}

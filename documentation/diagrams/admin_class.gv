@@ -1,0 +1,90 @@
+digraph AdminUML {
+	
+        fontname = "Monospace"
+        fontsize = 10
+
+        node [
+                fontname = "Monospace"
+                fontsize = 10
+                shape = "record"
+        ]
+
+        edge [
+                fontname = "Monospace"
+                fontsize = 10
+        ]
+        
+        Setup [
+		label = "{Setup|+ static const AUTH_FILE : string\l+ static const LOG_FILE : string\l+ static const ASSIGNMENT_DIR : string\l+ static const STUDENT_DIR : string\l- user : *User\l- logger : *Logger\l|+ Setup(User *user, Logger *logger) : Setup\l+ ~Setup() : void\l|+ runSetup() : bool\l+ uploadAssignment(file file) : bool\l- createDirectoryStructure() : bool\l}"
+        ]
+        
+        Logger [
+		label = "{Logger|- user : *User\l|+ Logger() : Logger\l+ ~Logger() : void\l|+ log(string activity, file file) : void\l+ readLog() : void\l- generateLogEntry(string activity) : string\l- encodeCurrentDateTime() : string\l- decodeDateTime(string dateTime) : string\l}"
+        ]
+        
+        subgraph user {
+		User [
+			label = "{User|- logger : *Logger\l- const uid : string\l|- User(string uid) : User\l+ ~User() : void\l|+ static login(string uid, string password) : User\l+ addStudent(string uid) : string\l+ addStaff(string uid) : string\l- addUser(string uid, enum UserType type) : string\l}"
+		]
+		
+		UserCreator [
+			label = "{UserCreator|- logger : *Logger\l- uid : string\l- password : string\l- type : enum UserType\l|+ UserCreator(string uid, enum UserType type) : UserCreator\l|+ createUser() : string\l- generatePassword() : void\l}"
+		]
+		
+		UserType [
+			label = "{enum UserType|STAFF\lSTUDENT\l}"
+		]
+        }
+        
+        subgraph file {
+		FileLocking [
+			label = "{FileLocking|||+ static checkOutFile(string filename) : file\l+ static checkInFile(file file) : bool\l- static checkFile(string filename) : bool\l- static lockFile(string filename) : void\l- static unlockFile(string filename) : void\l}"
+		]
+		
+		FileHandller [
+			label = "{FileHandller|||+ static createDir(string dirname) : bool\l+ static uploadFile(file file, bool overwrite) : bool\l+ static downloadFile(string filename) : file\l+ appendFile(file file) : boolean\l}"
+		]
+        }
+        
+        edge [
+		arrowhead = "odiamond"
+		style = "solid"
+		taillabel = "     1"
+        ]
+        
+        User -> Setup
+        Logger -> Setup
+        
+        User -> Logger [headlabel = "  1"]
+        Logger -> UserCreator
+        
+        edge [
+		arrowhead = "none"
+		style = "solid"
+		headlabel = "  1"
+		taillabel = ""
+        ]
+        
+        UserCreator -> UserType
+        
+        edge [
+		label="<<instantiate>>"
+		headlabel = ""
+		arrowhead = "vee"
+		style = "dashed"
+		labelfloat = false
+        ]
+        
+        User -> UserCreator
+        
+        edge [
+		label="<<use>>"
+		arrowhead = "vee"
+		style = "dashed"
+        ]
+        
+        Setup -> FileHandller
+        Logger -> FileHandller
+        UserCreator -> FileHandller
+        FileHandller -> FileLocking
+}
